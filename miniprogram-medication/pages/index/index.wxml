@@ -95,7 +95,7 @@
       <view class="rc-row"><text class="rc-label">预计用完日期</text><text class="rc-val blue">{{endDate}}</text></view>
       <view class="rc-divider"></view>
       <scroll-view class="rc-text" scroll-y>{{resultText}}</scroll-view>
-      <view class="ios-btn small" bindtap="copyResult">📋 复制结果</view>
+
     </view>
 
     <!-- Multi Prescription -->

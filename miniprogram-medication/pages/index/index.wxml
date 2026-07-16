@@ -1,0 +1,296 @@
+<view class="page">
+
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab===0?'active':''}}" data-index="0" bindtap="switchTab">处方计算</view>
+    <view class="tab-item {{activeTab===1?'active':''}}" data-index="1" bindtap="switchTab">日期工具</view>
+  </view>
+
+  <!-- ====== Tab 1: Prescription ====== -->
+  <view class="tab-content" wx:if="{{activeTab===0}}">
+
+    <!-- Drug Selector (multi-column picker) -->
+    <view class="section">
+      <view class="section-header">选择药物</view>
+      <picker mode="multiSelector" range="{{multiArray}}" value="{{multiIndex}}" bindchange="bindDrugPicker" bindcolumnchange="bindCategoryChange">
+        <view class="multi-picker-view">
+          <text class="mp-cat" wx:if="{{!medName}}">点击选择分类与药物</text>
+          <view wx:if="{{medName}}" class="mp-selected">
+            <text class="mp-cat-tag">{{multiArray[0][multiIndex[0]]}}</text>
+            <text class="mp-drug">{{medName}}</text>
+          </view>
+        </view>
+      </picker>
+      <view class="hint" wx:if="{{drugNote}}">{{drugNote}}</view>
+    </view>
+
+    <!-- Prescription Form -->
+    <view class="section" wx:if="{{showForm}}">
+      <view class="section-header">处方信息</view>
+
+      <view class="ff">
+        <text class="ff-lbl">药品</text>
+        <text class="ff-val">{{medName}}</text>
+      </view>
+
+      <view class="ff" bindtap="toggleCal" data-field="prescDate">
+        <text class="ff-lbl">开药日期</text>
+        <view class="ff-trigger">{{prescDate || '选择日期'}}</view>
+      </view>
+
+      <view wx:if="{{calShow}}" class="calendar-wrap">
+        <view class="cal-header">
+          <view class="cal-nav" bindtap="calPrevYear" data-target="cal">‹‹</view>
+          <view class="cal-nav" bindtap="calPrevMonth" data-target="cal">‹</view>
+          <text class="cal-title">{{calYear}}年{{calMonth}}月</text>
+          <view class="cal-nav" bindtap="calNextMonth" data-target="cal">›</view>
+          <view class="cal-nav" bindtap="calNextYear" data-target="cal">››</view>
+        </view>
+        <view class="cal-weekdays">
+          <view wx:for="{{weekDays}}" wx:key="*this" class="cal-wd">{{item}}</view>
+        </view>
+        <view class="cal-days">
+          <view wx:for="{{calDayRows}}" wx:key="idx" class="cal-row">
+            <view wx:for="{{item}}" wx:for-item="cell" wx:key="day" class="cal-cell {{cell.fill?'fill':''}}">
+              <view wx:if="{{!cell.fill}}" class="cal-day {{cell.isToday?'today':''}} {{cell.isSelected?'selected':''}}" data-day="{{cell.day}}" data-target="cal" bindtap="calSelectDate">{{cell.day}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="ff">
+        <text class="ff-lbl">每次{{drugUnit}}数</text>
+        <view class="ff-ipt-row">
+          <input class="ff-ipt" placeholder="如 1" value="{{dosePerTime}}" data-field="dosePerTime" bindinput="bindInput" type="digit" />
+          <text class="ff-unit">{{drugUnit}}</text>
+        </view>
+      </view>
+
+      <view class="ff">
+        <text class="ff-lbl">用药频次</text>
+        <picker mode="selector" range="{{freqOptions}}" value="{{freqPickerIdx}}" bindchange="bindFreqPicker">
+          <view class="ff-trigger">{{freqLabel}}</view>
+        </picker>
+      </view>
+
+      <view class="ff">
+        <text class="ff-lbl">开药总量</text>
+        <view class="ff-ipt-row">
+          <input class="ff-ipt" placeholder="如 60" value="{{totalQty}}" data-field="totalQty" bindinput="bindInput" type="digit" />
+          <text class="ff-unit">{{drugUnit}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Action Buttons -->
+    <view class="btn-row" wx:if="{{showForm}}">
+      <view class="ios-btn primary" bindtap="calcPresc">计算单次</view>
+      <view class="ios-btn secondary" bindtap="resetPresc">清空</view>
+    </view>
+
+    <!-- Single Result -->
+    <view class="result-card" wx:if="{{showResult}}">
+      <view class="rc-title">计算结果</view>
+      <view class="rc-row"><text class="rc-label">每天用量</text><text class="rc-val">{{dailyDoseText}}</text></view>
+      <view class="rc-row"><text class="rc-label">可服用天数</text><text class="rc-val blue">{{daysSupply}} 天</text></view>
+      <view class="rc-row"><text class="rc-label">预计用完日期</text><text class="rc-val blue">{{endDate}}</text></view>
+      <view class="rc-divider"></view>
+      <scroll-view class="rc-text" scroll-y>{{resultText}}</scroll-view>
+      <view class="ios-btn small" bindtap="copyResult">📋 复制结果</view>
+    </view>
+
+    <!-- Multi Prescription -->
+    <view class="section" wx:if="{{showForm}}">
+      <view class="section-header">多次处方列表</view>
+      <view class="ios-btn add-btn" bindtap="addPrescription">
+        <text class="add-icon">+</text>
+        <text>添加此处方到列表</text>
+      </view>
+      <view wx:if="{{prescList.length===0}}" class="empty-state">暂无处方记录</view>
+      <view wx:for="{{prescList}}" wx:key="id" class="presc-card">
+        <view class="presc-head">
+          <text class="presc-title">第{{index+1}}次 · {{item.medName}}</text>
+          <view class="presc-del" data-id="{{item.id}}" bindtap="removePrescription">删除</view>
+        </view>
+        <view class="presc-body">
+          <text class="presc-info">开药：{{item.prescDate}} ｜ 用法：{{item.dosePerTime}}{{item.unit}}/次 {{item.freqLabel}}</text>
+          <text class="presc-info">总量：{{item.totalQty}}{{item.unit}} ｜ 预计用完：{{item.endDate}}（{{item.daysSupply}}天）</text>
+        </view>
+      </view>
+      <view class="btn-row" wx:if="{{prescList.length>=2}}">
+        <view class="ios-btn primary" bindtap="analyzeGaps">分析断药</view>
+        <view class="ios-btn secondary" bindtap="clearList">清空列表</view>
+      </view>
+    </view>
+
+    <!-- Gap Result -->
+    <view class="result-card warn" wx:if="{{gapResult}}">
+      <view class="rc-title">断药分析</view>
+      <text class="gap-summary">共 {{gapResult.count}} 次处方</text>
+      <view wx:if="{{gapResult.gaps.length===0}}" class="gap-none">✅ 连续用药，无断药</view>
+      <view wx:for="{{gapResult.gaps}}" wx:key="index" class="gap-item">
+        <view class="gap-badge">{{item.gapDays}}天断药</view>
+        <text class="gap-text">{{item.fromLabel}}</text>
+        <text class="gap-arrow">→</text>
+        <text class="gap-text">{{item.toLabel}}</text>
+      </view>
+      <view class="gap-total" wx:if="{{gapResult.totalGapDays>0}}">累计断药：<text class="gap-num">{{gapResult.totalGapDays}} 天</text></view>
+      <view class="gap-timeline">
+        <view wx:for="{{gapResult.sorted}}" wx:key="id" class="tl-item">
+          <view class="tl-line {{item.hasGapBefore?'gap':''}}"></view>
+          <view class="tl-dot"></view>
+          <view class="tl-text">
+            <text class="tl-date">第{{index+1}}次：{{item.prescDate}} → {{item.endDate}}</text>
+            <text class="tl-days">{{item.daysSupply}}天</text>
+            <text wx:if="{{item.showCum}}" class="tl-cum">累计可到 {{item.cumEnd}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="gap-summary-box">
+        <view class="gs-row">
+          <text class="gs-lbl">连续未断药（至今）</text>
+          <text class="gs-val blue">{{gapResult.contMonths}}月{{gapResult.contDays}}天</text>
+        </view>
+        <view class="gs-row">
+          <text class="gs-lbl">项目要求（3个月）</text>
+          <text class="gs-val {{gapResult.contMet?'green':'orange'}}">
+            {{gapResult.contMet ? '✅ 已达标' : '还差 '+gapResult.targetRemain+' 天'}}
+          </text>
+        </view>
+        <view class="gs-divider"></view>
+        <view class="gs-row">
+          <text class="gs-lbl">全部药可吃到</text>
+          <text class="gs-val">{{gapResult.finalCoverageEnd}}</text>
+        </view>
+        <view class="gs-row">
+          <text class="gs-lbl">距离今天</text>
+          <text class="gs-val {{gapResult.remainingDays>=0?'blue':'red'}}">
+            {{gapResult.remainingDays>=0 ? '还剩 '+gapResult.remainingDays+' 天' : '已断药 '+(-gapResult.remainingDays)+' 天'}}
+          </text>
+        </view>
+        <view class="gs-row">
+          <text class="gs-lbl">建议购药时间</text>
+          <text class="gs-val {{gapResult.refillUrgent?'red':'warn'}}">{{gapResult.suggestRefillBy}}{{gapResult.refillUrgent?' ⚠️ 已过期':''}} 前</text>
+        </view>
+      </view>
+    </view>
+
+  </view>
+
+  <!-- ====== Tab 2: Date Tools ====== -->
+  <view class="tab-content" wx:if="{{activeTab===1}}">
+
+    <view class="section">
+      <view class="section-header">计算日期差</view>
+      <view class="ff" bindtap="toggleCal" data-field="date1">
+        <text class="ff-lbl">开始日期</text>
+        <view class="ff-trigger">{{date1}}</view>
+      </view>
+      <view wx:if="{{date1CalShow}}" class="calendar-wrap">
+        <view class="cal-header">
+          <view class="cal-nav" bindtap="calPrevYear" data-target="date1">‹‹</view>
+          <view class="cal-nav" bindtap="calPrevMonth" data-target="date1">‹</view>
+          <text class="cal-title">{{date1Year}}年{{date1Month}}月</text>
+          <view class="cal-nav" bindtap="calNextMonth" data-target="date1">›</view>
+          <view class="cal-nav" bindtap="calNextYear" data-target="date1">››</view>
+        </view>
+        <view class="cal-weekdays">
+          <view wx:for="{{weekDays}}" wx:key="*this" class="cal-wd">{{item}}</view>
+        </view>
+        <view class="cal-days">
+          <view wx:for="{{date1DayRows}}" wx:key="idx" class="cal-row">
+            <view wx:for="{{item}}" wx:for-item="cell" wx:key="day" class="cal-cell {{cell.fill?'fill':''}}">
+              <view wx:if="{{!cell.fill}}" class="cal-day {{cell.isToday?'today':''}} {{cell.isSelected?'selected':''}}" data-day="{{cell.day}}" data-target="date1" bindtap="calSelectDate">{{cell.day}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="ff" bindtap="toggleCal" data-field="date2">
+        <text class="ff-lbl">结束日期</text>
+        <view class="ff-trigger">{{date2}}</view>
+      </view>
+      <view wx:if="{{date2CalShow}}" class="calendar-wrap">
+        <view class="cal-header">
+          <view class="cal-nav" bindtap="calPrevYear" data-target="date2">‹‹</view>
+          <view class="cal-nav" bindtap="calPrevMonth" data-target="date2">‹</view>
+          <text class="cal-title">{{date2Year}}年{{date2Month}}月</text>
+          <view class="cal-nav" bindtap="calNextMonth" data-target="date2">›</view>
+          <view class="cal-nav" bindtap="calNextYear" data-target="date2">››</view>
+        </view>
+        <view class="cal-weekdays">
+          <view wx:for="{{weekDays}}" wx:key="*this" class="cal-wd">{{item}}</view>
+        </view>
+        <view class="cal-days">
+          <view wx:for="{{date2DayRows}}" wx:key="idx" class="cal-row">
+            <view wx:for="{{item}}" wx:for-item="cell" wx:key="day" class="cal-cell {{cell.fill?'fill':''}}">
+              <view wx:if="{{!cell.fill}}" class="cal-day {{cell.isToday?'today':''}} {{cell.isSelected?'selected':''}}" data-day="{{cell.day}}" data-target="date2" bindtap="calSelectDate">{{cell.day}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="ios-btn primary" bindtap="bindDateDiff">计算相差天数</view>
+      <view class="result-box" wx:if="{{dateDiff!==''}}">
+        <text class="rb-label">相差</text>
+        <text class="rb-num">{{dateDiff < 0 ? -dateDiff : dateDiff}}</text>
+        <text class="rb-label">天</text>
+        <text class="rb-sub">{{date1}} → {{date2}}</text>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-header">推算日期</view>
+      <view class="ff" bindtap="toggleCal" data-field="calcDate">
+        <text class="ff-lbl">起始日期</text>
+        <view class="ff-trigger">{{calcDate}}</view>
+      </view>
+      <view wx:if="{{calcDateCalShow}}" class="calendar-wrap">
+        <view class="cal-header">
+          <view class="cal-nav" bindtap="calPrevYear" data-target="calcDate">‹‹</view>
+          <view class="cal-nav" bindtap="calPrevMonth" data-target="calcDate">‹</view>
+          <text class="cal-title">{{calcDateYear}}年{{calcDateMonth}}月</text>
+          <view class="cal-nav" bindtap="calNextMonth" data-target="calcDate">›</view>
+          <view class="cal-nav" bindtap="calNextYear" data-target="calcDate">››</view>
+        </view>
+        <view class="cal-weekdays">
+          <view wx:for="{{weekDays}}" wx:key="*this" class="cal-wd">{{item}}</view>
+        </view>
+        <view class="cal-days">
+          <view wx:for="{{calcDateDayRows}}" wx:key="idx" class="cal-row">
+            <view wx:for="{{item}}" wx:for-item="cell" wx:key="day" class="cal-cell {{cell.fill?'fill':''}}">
+              <view wx:if="{{!cell.fill}}" class="cal-day {{cell.isToday?'today':''}} {{cell.isSelected?'selected':''}}" data-day="{{cell.day}}" data-target="calcDate" bindtap="calSelectDate">{{cell.day}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="ff">
+        <text class="ff-lbl">方向</text>
+        <view class="dir-group">
+          <view class="dir-btn {{calcDirection==='往后'?'active':''}}" data-val="往后" bindtap="setDirection">往后</view>
+          <view class="dir-btn {{calcDirection==='往前'?'active':''}}" data-val="往前" bindtap="setDirection">往前</view>
+        </view>
+      </view>
+      <view class="ff">
+        <text class="ff-lbl">数值</text>
+        <view class="ff-ipt-row">
+          <input class="ff-ipt" placeholder="如 30" value="{{calcOffset}}" data-field="calcOffset" bindinput="bindInput" type="digit" />
+          <text class="ff-unit">天/周/月</text>
+        </view>
+      </view>
+      <view class="ff">
+        <text class="ff-lbl">单位</text>
+        <picker mode="selector" range="{{['天','周','月']}}" value="0" bindchange="bindUnitPicker" data-field="calcUnit">
+          <view class="ff-trigger">{{calcUnit}}</view>
+        </picker>
+      </view>
+      <view class="ios-btn primary" bindtap="calcDateOffset">推算日期</view>
+      <view class="result-box" wx:if="{{calcResult}}">
+        <text class="rb-label">{{calcDate}} {{calcDirection}} {{calcOffset}}{{calcUnit}}：</text>
+        <text class="rb-num">{{calcResult}}</text>
+      </view>
+    </view>
+
+  </view>
+
+  <view class="footer">本工具仅供参考，实际用药请遵医嘱</view>
+
+</view>

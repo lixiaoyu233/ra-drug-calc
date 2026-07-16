@@ -1,0 +1,12 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#007AFF",
+    "navigationBarTitleText": "RA处方用药计算器",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F2F2F7"
+  },
+  "sitemapLocation": "sitemap.json"
+}

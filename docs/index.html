@@ -11,86 +11,119 @@
 <title>风免计算器</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;color:#1C1C1E;padding:12px 14px 30px;max-width:480px;margin:0 auto;min-height:100vh}
-.tabs{display:flex;background:#fff;border-radius:8px;overflow:hidden;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.tab{flex:1;text-align:center;padding:10px 0;font-size:14px;font-weight:500;color:#8E8E93;border-bottom:2px solid transparent;cursor:pointer}
-.tab.active{color:#007AFF;border-bottom-color:#007AFF;background:#f5f9ff}
-.card{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.card-hd{font-size:12px;font-weight:600;color:#8E8E93;letter-spacing:.5px;margin-bottom:10px}
-.ff{margin-bottom:10px}
+body{background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;color:#1d1d1f;padding:0 0 30px;-webkit-font-smoothing:antialiased}
+
+/* ====== Segmented Control (Apple style) ====== */
+.tab-bar{display:flex;gap:0;padding:16px 16px 0;position:sticky;top:0;z-index:10;background:rgba(245,245,247,.85);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+.tab{padding:8px 0 14px;font-size:13px;font-weight:500;color:#86868b;cursor:pointer;border-bottom:1.5px solid transparent;margin-bottom:-1px;transition:color .2s;position:relative;min-width:90px}
+.tab+.tab{margin-left:24px}
+.tab.active{color:#1d1d1f;border-bottom-color:#007AFF}
+.tab-contents{max-width:480px;margin:0 auto;padding:12px 16px}
+
+/* ====== Cards (Apple style) ====== */
+.card{background:#fff;border-radius:14px;padding:18px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.03)}
+.card-hd{font-size:13px;font-weight:600;color:#1d1d1f;margin-bottom:14px;letter-spacing:-.01em}
+
+/* ====== Form Fields ====== */
+.ff{margin-bottom:12px}
 .ff:last-child{margin-bottom:0}
-.ff-lbl{display:block;font-size:12px;color:#8E8E93;margin-bottom:3px}
-.ff-val{display:block;font-size:15px;color:#1C1C1E;font-weight:500;padding:0 2px}
-.ff-trigger,.ff-ipt{display:block;width:100%;height:36px;line-height:36px;padding:0 10px;font-size:14px;background:#F2F2F7;border:none;border-radius:6px;outline:none;color:#1C1C1E}
+.ff-lbl{display:block;font-size:12px;font-weight:500;color:#86868b;margin-bottom:5px;letter-spacing:-.01em}
+.ff-val{display:block;font-size:16px;color:#1d1d1f;font-weight:500;padding:0 2px}
+.ff-trigger,.ff-ipt{display:block;width:100%;height:40px;line-height:40px;padding:0 14px;font-size:15px;background:#f5f5f7;border:none;border-radius:10px;outline:none;color:#1d1d1f;-webkit-appearance:none;appearance:none;cursor:pointer}
 .ff-trigger{color:#007AFF}
 .ff-ipt{text-align:right}
 .ff-ipt::-webkit-inner-spin-button{-webkit-appearance:none}
-.ff-row{display:flex;gap:8px}
-.ff-row .ff{flex:1}
-.ff-hint{font-size:11px;color:#8E8E93;line-height:1.4;margin-top:3px}
-select.ff-trigger{-webkit-appearance:none;appearance:none;color:#1C1C1E;cursor:pointer}
-select.ff-trigger:invalid{color:#C7C7CC}
-.btn-row{display:flex;gap:8px;margin:4px 0 8px}
-.btn{flex:1;height:40px;border-radius:8px;font-size:15px;font-weight:500;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.btn-primary{background:#007AFF;color:#fff}
-.btn-secondary{background:#F2F2F7;color:#007AFF}
-.btn-small{height:32px;border-radius:6px;font-size:13px;background:#F2F2F7;color:#007AFF;border:none;cursor:pointer;padding:0 12px}
-.btn-add{background:none;border:1.5px dashed #C7C7CC;color:#007AFF;height:36px;border-radius:8px;width:100%;font-size:14px;cursor:pointer;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:4px}
-.btn-del{font-size:12px;color:#FF3B30;cursor:pointer;padding:4px 6px}
-.empty{text-align:center;padding:16px 0 8px;font-size:13px;color:#C7C7CC}
-.presc-card{background:#F9F9FB;border-radius:8px;padding:10px 12px;margin-bottom:6px;border:.5px solid #E5E5EA}
-.presc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.presc-title{font-size:13px;font-weight:600;color:#1C1C1E}
-.presc-body{font-size:12px;color:#636366;line-height:1.5}
-.result{border-left:3px solid #007AFF}
-.result.warn{border-left-color:#FF9500}
-.result .rc-title{font-size:14px;font-weight:600;margin-bottom:8px}
-.rc-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
-.rc-row .rc-lbl{color:#636366}
-.rc-row .rc-val{font-weight:600;color:#1C1C1E}
-.rc-row .rc-val.blue{color:#007AFF;font-size:15px}
-.rc-row .rc-val.red{color:#FF3B30}
-.rc-row .rc-val.green{color:#34C759}
-.rc-row .rc-val.orange{color:#FF9500}
-.rc-div{height:.5px;background:#E5E5EA;margin:6px 0}
-.rc-text{font-size:12px;color:#3C3C43;line-height:1.6;white-space:pre-wrap;padding:6px 8px;background:#F9F9FB;border-radius:6px;font-family:monospace;margin-bottom:6px}
-.gap-item{display:flex;align-items:center;gap:4px;padding:4px 0;flex-wrap:wrap;font-size:13px}
-.gap-badge{background:#FFF2F0;color:#FF3B30;font-size:11px;font-weight:600;padding:2px 6px;border-radius:3px}
-.gap-text{font-size:12px;color:#3C3C43}
-.gap-arrow{color:#C7C7CC;font-size:13px}
-.gap-total{text-align:center;padding:6px 0 2px;font-size:13px;color:#3C3C43}
-.gap-total .num{color:#FF3B30;font-weight:700;font-size:16px}
-.gap-none{text-align:center;padding:12px 0;font-size:14px;color:#34C759;font-weight:500}
-.tl-item{display:flex;align-items:flex-start;padding:3px 0;position:relative}
-.tl-line{width:2px;height:100%;background:#34C759;margin-right:8px;position:absolute;left:5px;top:12px}
-.tl-line.gap{background:#FF9500}
-.tl-dot{width:10px;height:10px;border-radius:50%;background:#007AFF;flex-shrink:0;margin-top:3px;z-index:1}
-.tl-text{flex:1;margin-left:8px}
-.tl-date{font-size:12px;color:#3C3C43}
-.tl-days{font-size:11px;color:#8E8E93;margin-left:auto}
-.tl-cum{display:block;font-size:11px;color:#007AFF;margin-top:1px}
-.summary-box{background:#F0F6FF;border-radius:8px;padding:10px 12px;margin-top:10px}
-.sm-row{display:flex;justify-content:space-between;padding:2px 0;font-size:12px}
-.sm-row .sm-lbl{color:#636366}
-.sm-row .sm-val{font-weight:600;color:#1C1C1E}
+.ff-row{display:flex;gap:10px}
+.ff-row .ff{flex:1;min-width:0}
+.ff-hint{font-size:12px;color:#86868b;line-height:1.4;margin-top:4px}
+select.ff-trigger{color:#1d1d1f}
+select.ff-trigger:invalid{color:#c7c7cc}
+
+/* ====== Buttons (Apple style, pill-shaped) ====== */
+.btn-row{display:flex;gap:10px;margin:6px 0}
+.btn{height:44px;border-radius:22px;font-size:15px;font-weight:500;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 20px;transition:all .2s}
+.btn-primary{background:linear-gradient(180deg,#007AFF,#0066d6);color:#fff;box-shadow:0 2px 8px rgba(0,122,255,.3);flex:1}
+.btn-primary:active{transform:scale(.97);box-shadow:0 1px 4px rgba(0,122,255,.2)}
+.btn-secondary{background:#f5f5f7;color:#007AFF;flex:1}
+.btn-secondary:active{background:#e8e8ed}
+.btn-small{height:34px;border-radius:17px;font-size:13px;font-weight:500;background:#f5f5f7;color:#007AFF;border:none;cursor:pointer;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;transition:all .2s}
+.btn-small:active{background:#e8e8ed}
+.btn-add{background:none;border:1.5px dashed #c7c7cc;color:#007AFF;height:40px;border-radius:20px;width:100%;font-size:14px;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .2s}
+.btn-add:active{background:#f5f5f7}
+.btn-del{font-size:13px;color:#ff3b30;cursor:pointer;padding:4px 8px;border-radius:6px}
+.btn-del:active{background:#fff2f0}
+
+/* ====== Prescription List ====== */
+.empty{text-align:center;padding:20px 0 10px;font-size:14px;color:#c7c7cc}
+.presc-card{background:#f9f9fb;border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.presc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.presc-title{font-size:14px;font-weight:600;color:#1d1d1f}
+.presc-body{font-size:13px;color:#86868b;line-height:1.5}
+
+/* ====== Result Cards ====== */
+.result{border-radius:14px;padding:18px;margin-bottom:12px;background:linear-gradient(135deg,#f8faff,#f0f6ff);box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.03)}
+.result.warn{background:linear-gradient(135deg,#fffbf5,#fff8e1)}
+.result .rc-title{font-size:15px;font-weight:600;color:#1d1d1f;margin-bottom:10px}
+.rc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
+.rc-row+.rc-row{border-top:0.5px solid rgba(0,0,0,.04)}
+.rc-row .rc-lbl{font-size:14px;color:#86868b}
+.rc-row .rc-val{font-size:15px;font-weight:600;color:#1d1d1f}
+.rc-row .rc-val.blue{color:#007AFF;font-size:16px}
+.rc-row .rc-val.red{color:#ff3b30}
+.rc-row .rc-val.green{color:#34c759}
+.rc-row .rc-val.orange{color:#ff9500}
+.rc-div{height:0.5px;background:rgba(0,0,0,.06);margin:8px 0}
+.rc-text{font-size:13px;color:#515154;line-height:1.7;white-space:pre-wrap;padding:10px 12px;background:rgba(0,0,0,.03);border-radius:10px;font-family:SFMono-Regular,Menlo,monospace}
+
+/* ====== Gap Analysis ====== */
+.gap-item{display:flex;align-items:center;gap:6px;padding:5px 0;flex-wrap:wrap;font-size:14px}
+.gap-badge{background:#fff2f0;color:#ff3b30;font-size:12px;font-weight:600;padding:2px 8px;border-radius:4px}
+.gap-text{font-size:13px;color:#515154}
+.gap-arrow{color:#c7c7cc;font-size:14px}
+.gap-total{text-align:center;padding:8px 0 4px;font-size:14px;color:#515154}
+.gap-total .num{color:#ff3b30;font-weight:700;font-size:18px}
+.gap-none{text-align:center;padding:14px 0;font-size:15px;color:#34c759;font-weight:500}
+
+/* ====== Timeline ====== */
+.tl-item{display:flex;align-items:flex-start;padding:4px 0;position:relative}
+.tl-line{width:2px;background:#34c759;position:absolute;left:5px;top:14px;bottom:0}
+.tl-line.gap{background:#ff9500}
+.tl-item:last-child .tl-line{height:0}
+.tl-dot{width:12px;height:12px;border-radius:50%;background:#007AFF;flex-shrink:0;margin-top:3px;z-index:1}
+.tl-text{flex:1;margin-left:12px}
+.tl-date{font-size:13px;color:#1d1d1f}
+.tl-days{font-size:12px;color:#86868b;margin-left:8px}
+.tl-cum{display:block;font-size:12px;color:#007AFF;margin-top:2px}
+
+/* ====== Summary Box ====== */
+.summary-box{background:#f8faff;border-radius:12px;padding:14px;margin-top:12px}
+.sm-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:13px}
+.sm-row .sm-lbl{color:#86868b}
+.sm-row .sm-val{font-weight:600;color:#1d1d1f}
 .sm-row .sm-val.blue{color:#007AFF}
-.sm-row .sm-val.red{color:#FF3B30}
-.sm-row .sm-val.green{color:#34C759}
-.sm-row .sm-val.orange{color:#FF9500}
-.sm-div{height:.5px;background:#E5E5EA;margin:6px 0}
-.result-box{margin-top:10px;padding:12px;background:#F2F2F7;border-radius:8px;text-align:center;font-size:13px}
-.result-box .num{display:block;font-size:24px;font-weight:700;color:#007AFF;margin:3px 0}
-.result-box .sub{display:block;font-size:11px;color:#8E8E93;margin-top:2px}
+.sm-row .sm-val.red{color:#ff3b30}
+.sm-row .sm-val.green{color:#34c759}
+.sm-row .sm-val.orange{color:#ff9500}
+.sm-div{height:0.5px;background:rgba(0,0,0,.06);margin:6px 0}
+
+/* ====== Date Tools Result ====== */
+.result-box{margin-top:10px;padding:16px;background:#f5f5f7;border-radius:12px;text-align:center}
+.result-box .num{display:block;font-size:28px;font-weight:700;color:#007AFF;margin:4px 0;letter-spacing:-.02em}
+.result-box .sub{display:block;font-size:12px;color:#86868b;margin-top:2px}
+
+/* ====== Misc ====== */
 .hide{display:none!important}
-.footer{text-align:center;font-size:11px;color:#C7C7CC;padding:14px 0 4px}
+.footer{text-align:center;font-size:12px;color:#c7c7cc;padding:20px 0 8px;max-width:480px;margin:0 auto}
 </style>
 </head>
 <body>
 
-<div class="tabs" id="tabBar">
+<div class="tab-bar" id="tabBar">
   <div class="tab active" data-tab="0" onclick="switchTab(0)">处方计算</div>
   <div class="tab" data-tab="1" onclick="switchTab(1)">日期工具</div>
 </div>
+
+<div class="tab-contents">
 
 <!-- Tab 0: 处方 -->
 <div id="tab0" class="tab-content">
@@ -212,6 +245,7 @@ select.ff-trigger:invalid{color:#C7C7CC}
       <span class="num" id="offsetNum"></span>
     </div>
   </div>
+</div>
 </div>
 
 <div class="footer">本工具仅供参考，实际用药请遵医嘱</div>

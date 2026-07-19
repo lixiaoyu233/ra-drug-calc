@@ -1,4 +1,4 @@
-const CACHE = 'fengmian-v1'
+const CACHE = 'fengmian-v2'
 const URLS = ['/Rheumatology-Calc/', '/Rheumatology-Calc/index.html', '/Rheumatology-Calc/manifest.json', '/Rheumatology-Calc/icon.svg']
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(URLS)))

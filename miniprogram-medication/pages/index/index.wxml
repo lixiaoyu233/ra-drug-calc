@@ -315,9 +315,9 @@
         </view>
         <view class="rec-foot">
           <text class="rec-days {{item.remainingDays>=0 && item.remainingDays<=7?'warn':''}}">
-            {{item.remainingDays>=0?'剩余 '+item.remainingDays+' 天':'已过期'}}
+            {{item.remainingDays>=0?'剩余 '+item.remainingDays+' 天没药':'已过期'}}
           </text>
-          <text wx:if="{{item.remainingDays>=0 && item.remainingDays<=7}}" class="rec-badge">⚠️ 即将用完</text>
+          <text wx:if="{{!item.contMet}}" class="rec-badge">建议购买 {{item.pillsNeeded}}{{item.unit}} 药物</text>
         </view>
       </view>
     </view>

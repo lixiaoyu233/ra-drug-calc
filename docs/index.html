@@ -666,7 +666,7 @@ function renderRecords(list) {
       <div class="rec-actions"><span class="rec-btn edit" onclick="editRecord(${r.id})">编辑</span><span class="rec-btn del" onclick="deleteRecord(${r.id})">删除</span></div>
     </div>
     <div class="rec-body"><span class="rec-info">${r.medName} ｜ ${r.prescList.length}次处方</span><span class="rec-info">保存于 ${r.saveDateStr}</span><span class="rec-info">用完时间：${r.endDate}</span><span class="rec-info">连续未断药：${r.contDays}天</span><span class="rec-info">${r.contMet ? '项目要求（3个月）：✅ 已达标' : '项目要求（3个月）：还需'+r.targetRemain+'天'}</span>${r.contMet ? '' : '<span class="rec-info">还需购买药物：'+r.pillsNeeded+r.unit+'</span>'}</div>
-    <div class="rec-foot"><span class="rec-days ${r.remainingDays>=0 && r.remainingDays<=7?'warn':''}">${r.remainingDays>=0?'剩余 '+r.remainingDays+' 天':'已过期'}</span>${r.remainingDays>=0 && r.remainingDays<=7?'<span class="rec-badge">⚠️ 即将用完</span>':''}</div>
+    <div class="rec-foot"><span class="rec-days ${r.remainingDays>=0 && r.remainingDays<=7?'warn':''}">${r.remainingDays>=0?'剩余 '+r.remainingDays+' 天没药':'已过期'}</span>${r.contMet?'':'<span class="rec-badge">建议购买 '+r.pillsNeeded+r.unit+' 药物</span>'}</div>
   </div>`).join('')
 }
 

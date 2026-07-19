@@ -89,10 +89,10 @@ select.ff-trigger:invalid{color:#c7c7cc}
 .tl-line.gap{background:#ff9500}
 .tl-item:last-child .tl-line{height:0}
 .tl-dot{width:12px;height:12px;border-radius:50%;background:#007AFF;flex-shrink:0;margin-top:3px;z-index:1}
-.tl-text{flex:1;margin-left:12px}
-.tl-date{font-size:13px;color:#1d1d1f}
-.tl-days{font-size:12px;color:#86868b;margin-left:8px}
-.tl-cum{display:block;font-size:12px;color:#007AFF;margin-top:2px}
+.tl-text{flex:1;margin-left:12px;display:flex;align-items:center;gap:4px;overflow:hidden}
+.tl-date{font-size:13px;color:#1d1d1f;flex-shrink:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl-days{font-size:12px;color:#86868b;flex-shrink:0;white-space:nowrap}
+.tl-cum{font-size:11px;color:#007AFF;flex-shrink:0;white-space:nowrap;margin-top:0}
 
 /* ====== Summary Box ====== */
 .summary-box{background:#f8faff;border-radius:12px;padding:14px;margin-top:12px}
@@ -600,7 +600,7 @@ function analyze(){
     html+=gaps.map(g=>`<div class="gap-item"><span class="gap-badge">${g.gapDays}天断药</span><span class="gap-text">${g.fromLabel}</span><span class="gap-arrow">→</span><span class="gap-text">${g.toLabel}</span></div>`).join('')
     html+=`<div class="gap-total">累计断药：<span class="num">${totalGap} 天</span></div>`
   }
-  html+='<div class="gap-timeline">'+entries.map((e,i)=>`<div class="tl-item"><div class="tl-line${e.hasGapBefore?' gap':''}"></div><div class="tl-dot"></div><div class="tl-text"><div class="tl-date">第${i+1}次：${e.prescDate} → ${e.endDate}<span class="tl-days">${e.daysSupply}天</span></div>${e.showCum?'<div class="tl-cum">累计可到 '+e.cumEnd+'</div>':''}</div></div>`).join('')+'</div>'
+  html+='<div class="gap-timeline">'+entries.map((e,i)=>`<div class="tl-item"><div class="tl-line${e.hasGapBefore?' gap':''}"></div><div class="tl-dot"></div><div class="tl-text"><div class="tl-date">第${i+1}次：${e.prescDate} → ${e.endDate}</div><span class="tl-days">${e.daysSupply}天</span>${e.showCum?'<span class="tl-cum">累计可到 '+e.cumEnd+'</span>':''}</div></div>`).join('')+'</div>'
   html+='<div class="summary-box">'
   html+=`<div class="sm-row"><span class="sm-lbl">连续未断药（至今）</span><span class="sm-val blue">${contM}月${contD}天</span></div>`
   html+=`<div class="sm-row"><span class="sm-lbl">项目要求（3个月）</span><span class="sm-val ${contMet?'green':'orange'}">${contMet?'✅ 已达标':'还差 '+tRemain+' 天'}</span></div>`

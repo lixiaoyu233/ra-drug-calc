@@ -99,6 +99,14 @@ Page({
     iconPillInactive: "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjIgMjIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjODY4NjhiIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSI3IiB5PSI2IiB3aWR0aD0iOCIgaGVpZ2h0PSIxMiIgcng9IjIiLz48cmVjdCB4PSI5IiB5PSIzIiB3aWR0aD0iNCIgaGVpZ2h0PSIzIiByeD0iLjUiLz48L3N2Zz4=",
     iconCalActive: "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjIgMjIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDA3QUZGIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIzIiB5PSI1IiB3aWR0aD0iMTYiIGhlaWdodD0iMTQiIHJ4PSIyIi8+PHBhdGggZD0iTTcgMnY0TTE1IDJ2NE0zIDloMTYiLz48L3N2Zz4=",
     iconCalInactive: "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjIgMjIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjODY4NjhiIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIzIiB5PSI1IiB3aWR0aD0iMTYiIGhlaWdodD0iMTQiIHJ4PSIyIi8+PHBhdGggZD0iTTcgMnY0TTE1IDJ2NE0zIDloMTYiLz48L3N2Zz4=",
+    iconListActive: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDA3QUZGIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48bGluZSB4MT0iNCIgeTE9IjYiIHgyPSIxOCIgeTI9IjYiLz48bGluZSB4MT0iNCIgeTE9IjExIiB4Mj0iMTgiIHkyPSIxMSIvPjxsaW5lIHgxPSI0IiB5MT0iMTYiIHgyPSIxOCIgeTI9IjE2Ii8+PC9zdmc+",
+    iconListInactive: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjODY4NjhiIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48bGluZSB4MT0iNCIgeTE9IjYiIHgyPSIxOCIgeTI9IjYiLz48bGluZSB4MT0iNCIgeTE9IjExIiB4Mj0iMTgiIHkyPSIxMSIvPjxsaW5lIHgxPSI0IiB5MT0iMTYiIHgyPSIxOCIgeTI9IjE2Ii8+PC9zdmc+",
+
+    savedRecords: [],
+    editRecordId: null,
+    showSaveDialog: false,
+    saveAbbr: '',
+    saveAbbrError: '',
   },
 
   onLoad() {
@@ -115,6 +123,11 @@ Page({
     })
     this.buildCalendar(y, m, 'cal')
     this.initDrugPicker()
+    this.loadRecords()
+  },
+
+  onShow() {
+    this.loadRecords()
   },
 
   initDrugPicker() {
@@ -393,6 +406,127 @@ Page({
         contMonths, contDays, contStart, contMet, targetRemain
       }
     })
+  },
+
+  /* ====== Records (Save/Load) ====== */
+  STORAGE_KEY: 'calc_records',
+
+  loadRecords() {
+    const raw = wx.getStorageSync(this.STORAGE_KEY) || []
+    const now = new Date()
+    const records = raw.map(r => {
+      const days = this.calcRecordDays(r.prescList)
+      return {
+        ...r,
+        remainingDays: days,
+        saveDateStr: util.formatDate(new Date(r.lastSaved))
+      }
+    })
+    records.sort((a, b) => b.lastSaved - a.lastSaved)
+    this.setData({ savedRecords: records })
+  },
+
+  calcRecordDays(prescList) {
+    if (!prescList || prescList.length === 0) return -1
+    const sorted = [...prescList].sort((a, b) => a.prescDate.localeCompare(b.prescDate))
+    let remainPills = parseFloat(sorted[0].totalQty)
+    let currentDose = sorted[0].dailyDose
+    let lastDate = util.parseDate(sorted[0].prescDate)
+    for (let i = 1; i < sorted.length; i++) {
+      const p = sorted[i]
+      const currDate = util.parseDate(p.prescDate)
+      const daysElapsed = util.diffDays(lastDate, currDate)
+      const needed = daysElapsed * currentDose
+      if (needed > remainPills) { remainPills = 0 } else { remainPills -= needed }
+      remainPills += parseFloat(p.totalQty)
+      currentDose = p.dailyDose
+      lastDate = currDate
+    }
+    const finalDays = Math.floor(remainPills / currentDose)
+    return Math.max(0, finalDays)
+  },
+
+  showSaveDialog() {
+    if (this.data.prescList.length === 0) { wx.showToast({ title: '暂无处方记录可保存', icon: 'none' }); return }
+    const abbr = this.data.editRecordId
+      ? (this.data.savedRecords.find(r => r.id === this.data.editRecordId)?.abbr || '')
+      : ''
+    this.setData({ showSaveDialog: true, saveAbbr: abbr, saveAbbrError: '' })
+  },
+
+  onSaveAbbrInput(e) {
+    let v = (e.detail.value || '').replace(/[^a-zA-Z]/g, '').slice(0, 4).toUpperCase()
+    this.setData({ saveAbbr: v, saveAbbrError: '' })
+  },
+
+  confirmSave() {
+    const abbr = this.data.saveAbbr.trim()
+    if (abbr.length !== 4) { this.setData({ saveAbbrError: '请输入4位字母' }); return }
+    const d = this.data
+    const record = {
+      id: d.editRecordId || Date.now(),
+      abbr,
+      medName: d.medName,
+      prescList: d.prescList.map(p => ({...p})),
+      drugUnit: d.drugUnit,
+      lastSaved: Date.now(),
+      dosePerTime: d.dosePerTime,
+      freqVal: d.freqVal,
+      freqLabel: d.freqLabel
+    }
+    let records = wx.getStorageSync(this.STORAGE_KEY) || []
+    const idx = records.findIndex(r => r.id === record.id)
+    if (idx >= 0) { records[idx] = record } else { records.push(record) }
+    wx.setStorageSync(this.STORAGE_KEY, records)
+    this.setData({ showSaveDialog: false, editRecordId: null, saveAbbr: '' })
+    this.loadRecords()
+    wx.showToast({ title: idx >= 0 ? '已更新' : '已保存', icon: 'success' })
+  },
+
+  cancelSave() { this.setData({ showSaveDialog: false, editRecordId: null, saveAbbr: '' }) },
+
+  deleteRecord(e) {
+    const id = parseInt(e.currentTarget.dataset.id)
+    wx.showModal({
+      title: '删除记录',
+      content: '确定删除此记录？',
+      success: (res) => {
+        if (res.confirm) {
+          let records = wx.getStorageSync(this.STORAGE_KEY) || []
+          records = records.filter(r => r.id !== id)
+          wx.setStorageSync(this.STORAGE_KEY, records)
+          this.loadRecords()
+        }
+      }
+    })
+  },
+
+  editRecord(e) {
+    const id = parseInt(e.currentTarget.dataset.id)
+    const records = wx.getStorageSync(this.STORAGE_KEY) || []
+    const rec = records.find(r => r.id === id)
+    if (!rec) { wx.showToast({ title: '记录不存在', icon: 'none' }); return }
+    this.setData({
+      activeTab: 0,
+      editRecordId: id,
+      medName: rec.medName,
+      drugUnit: rec.drugUnit,
+      dosePerTime: rec.dosePerTime,
+      freqVal: rec.freqVal,
+      freqLabel: rec.freqLabel,
+      prescList: rec.prescList.map(p => ({...p})),
+      showForm: true,
+      gapResult: null,
+      showResult: false
+    })
+    const catIdx = catOrder.findIndex(c => drugDB[rec.medName]?.cat === c)
+    const drugs = this.data.drugByCat[catOrder[catIdx >= 0 ? catIdx : 0]] || []
+    const drugIdx = drugs.indexOf(rec.medName)
+    this.setData({
+      multiArray: [catOrder.map(c => catLabel[c]), drugs],
+      multiIndex: [catIdx >= 0 ? catIdx : 0, drugIdx >= 0 ? drugIdx : 0]
+    })
+    wx.showToast({ title: '正在编辑 ' + rec.abbr, icon: 'none' })
   },
 
   /* ====== Single Prescription Calc ====== */

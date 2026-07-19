@@ -80,6 +80,35 @@ select.ff-trigger:invalid{color:#C7C7CC}
 .footer{text-align:center;font-size:11px;color:#C7C7CC;padding:14px 0 4px}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:rgba(250,250,252,.98);border-top:.5px solid rgba(0,0,0,.1);padding:6px 0 20px;z-index:100;max-width:480px;margin:0 auto}
 
+/* ====== Record Cards ====== */
+#recordsList .rec-card{background:#f9f9fb;border-radius:8px;padding:10px 12px;margin-bottom:8px}
+#recordsList .rec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+#recordsList .rec-abbr{font-size:15px;font-weight:700;color:#007AFF;letter-spacing:1px}
+#recordsList .rec-actions{display:flex;gap:8px}
+#recordsList .rec-btn{font-size:12px;padding:4px 8px;border-radius:6px;cursor:pointer}
+#recordsList .rec-btn.edit{color:#007AFF}
+#recordsList .rec-btn.del{color:#FF3B30}
+#recordsList .rec-body{display:flex;flex-direction:column;gap:2px;margin-bottom:6px}
+#recordsList .rec-info{font-size:12px;color:#86868b;line-height:1.4}
+#recordsList .rec-foot{display:flex;align-items:center;gap:8px;padding-top:6px;border-top:0.5px solid rgba(0,0,0,.04)}
+#recordsList .rec-days{font-size:14px;font-weight:600;color:#1d1d1f}
+#recordsList .rec-days.warn{color:#FF3B30}
+#recordsList .rec-badge{font-size:11px;color:#FF3B30;background:#FFF2F0;padding:2px 6px;border-radius:3px}
+.save-btn{margin-top:10px}
+#recordsList .empty{text-align:center;padding:20px 0 10px;font-size:14px;color:#c7c7cc}
+/* ====== Save Dialog ====== */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:200}
+.modal-box{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:280px;background:#fff;border-radius:14px;z-index:201;overflow:hidden}
+.modal-hd{text-align:center;font-size:16px;font-weight:600;color:#1d1d1f;padding:16px 16px 0}
+.modal-body{padding:16px}
+.modal-lbl{display:block;font-size:13px;color:#86868b;margin-bottom:6px}
+.modal-ipt{display:block;width:100%;height:40px;line-height:40px;padding:0 12px;font-size:20px;font-weight:700;text-align:center;letter-spacing:3px;background:#f5f5f7;border:none;border-radius:10px;outline:none;color:#1d1d1f;text-transform:uppercase;box-sizing:border-box}
+.modal-err{display:block;font-size:12px;color:#FF3B30;margin-top:4px;text-align:center}
+.modal-btns{display:flex;border-top:0.5px solid rgba(0,0,0,.06)}
+.modal-btn{flex:1;text-align:center;padding:14px 0;font-size:15px;cursor:pointer;border:none;background:none}
+.modal-btn.cancel{color:#86868b}
+.modal-btn.confirm{color:#007AFF;font-weight:600}
+
 @media(prefers-color-scheme:dark){
 body{background:#1C1C1E;color:#F5F5F7}
 .card,.tabs{background:#2C2C2E;box-shadow:none}
@@ -125,6 +154,21 @@ select.ff-trigger{color:#F5F5F7}
 .nav-label{color:#98989D}
 .nav-item.active .nav-svg{color:#0A84FF}
 .nav-item.active .nav-label{color:#0A84FF}
+#recordsList .rec-card{background:#3A3A3C}
+#recordsList .rec-abbr{color:#0A84FF}
+#recordsList .rec-info{color:#98989D}
+#recordsList .rec-days{color:#F5F5F7}
+#recordsList .rec-days.warn{color:#FF453A}
+#recordsList .rec-badge{color:#FF453A;background:#4A2020}
+#recordsList .rec-foot{border-color:#38383A}
+#recordsList .empty{color:#48484A}
+.modal-box{background:#2C2C2E}
+.modal-hd{color:#F5F5F7}
+.modal-lbl{color:#98989D}
+.modal-ipt{background:#3A3A3C;color:#F5F5F7}
+.modal-btn.cancel{color:#98989D}
+.modal-btn.confirm{color:#0A84FF}
+.modal-btns{border-color:#38383A}
 }
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:2px 0;cursor:pointer}
 .nav-icon{width:24px;height:24px}
@@ -206,6 +250,8 @@ select.ff-trigger{color:#F5F5F7}
     <div id="gapBody"></div>
   </div>
 
+  <button class="btn btn-primary save-btn" type="button" onclick="showSaveDialog()">保存记录</button>
+
 </div>
 
 <!-- Tab 1: 日期工具 -->
@@ -258,6 +304,14 @@ select.ff-trigger{color:#F5F5F7}
   </div>
 </div>
 
+<!-- Tab 2: 保存记录 -->
+<div id="tab2" class="tab-content hide">
+  <div class="card">
+    <div class="card-hd">保存的记录</div>
+    <div id="recordsList"></div>
+  </div>
+</div>
+
 <div class="footer">本工具仅供参考，实际用药请遵医嘱</div>
 
 <div class="bottom-nav">
@@ -268,6 +322,24 @@ select.ff-trigger{color:#F5F5F7}
   <div class="nav-item" data-tab="1" onclick="switchTab(1)">
     <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="nav-svg"><rect x="3" y="5" width="16" height="14" rx="2"/><path d="M7 2v4M15 2v4M3 9h16"/></svg>
     <span class="nav-label">日期工具</span>
+  </div>
+  <div class="nav-item" data-tab="2" onclick="switchTab(2)">
+    <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="nav-svg"><line x1="4" y1="6" x2="18" y2="6"/><line x1="4" y1="11" x2="18" y2="11"/><line x1="4" y1="16" x2="18" y2="16"/></svg>
+    <span class="nav-label">记录</span>
+  </div>
+</div>
+
+<div class="modal-overlay hide" id="saveOverlay" onclick="cancelSave()"></div>
+<div class="modal-box hide" id="saveDialog">
+  <div class="modal-hd" id="saveDialogTitle">保存记录</div>
+  <div class="modal-body">
+    <label class="modal-lbl">输入缩写（4位字母）</label>
+    <input class="modal-ipt" id="saveAbbrInput" maxlength="4" placeholder="如 MTX1" oninput="onSaveAbbrInput(this)" autofocus/>
+    <span class="modal-err hide" id="saveAbbrError"></span>
+  </div>
+  <div class="modal-btns">
+    <button class="modal-btn cancel" type="button" onclick="cancelSave()">取消</button>
+    <button class="modal-btn confirm" type="button" onclick="confirmSave()">确认</button>
   </div>
 </div>
 

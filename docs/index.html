@@ -122,6 +122,35 @@ select.ff-trigger:invalid{color:#c7c7cc}
 .nav-item.active .nav-svg{color:#007AFF}
 .nav-item.active .nav-label{color:#007AFF}
 
+/* ====== Record Cards ====== */
+#recordsList .rec-card{background:#f9f9fb;border-radius:12px;padding:12px 14px;margin-bottom:10px}
+#recordsList .rec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+#recordsList .rec-abbr{font-size:16px;font-weight:700;color:#007AFF;letter-spacing:1px}
+#recordsList .rec-actions{display:flex;gap:8px}
+#recordsList .rec-btn{font-size:13px;padding:4px 8px;border-radius:6px;cursor:pointer}
+#recordsList .rec-btn.edit{color:#007AFF}
+#recordsList .rec-btn.del{color:#FF3B30}
+#recordsList .rec-body{display:flex;flex-direction:column;gap:2px;margin-bottom:6px}
+#recordsList .rec-info{font-size:12px;color:#86868b;line-height:1.4}
+#recordsList .rec-foot{display:flex;align-items:center;gap:8px;padding-top:6px;border-top:0.5px solid rgba(0,0,0,.04)}
+#recordsList .rec-days{font-size:14px;font-weight:600;color:#1d1d1f}
+#recordsList .rec-days.warn{color:#FF3B30}
+#recordsList .rec-badge{font-size:11px;color:#FF3B30;background:#FFF2F0;padding:2px 6px;border-radius:3px}
+.save-btn{margin-top:10px}
+#recordsList .empty{text-align:center;padding:20px 0 10px;font-size:14px;color:#c7c7cc}
+/* ====== Save Dialog ====== */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:200}
+.modal-box{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:280px;background:#fff;border-radius:14px;z-index:201;overflow:hidden}
+.modal-hd{text-align:center;font-size:16px;font-weight:600;color:#1d1d1f;padding:16px 16px 0}
+.modal-body{padding:16px}
+.modal-lbl{display:block;font-size:13px;color:#86868b;margin-bottom:6px}
+.modal-ipt{display:block;width:100%;height:40px;line-height:40px;padding:0 12px;font-size:20px;font-weight:700;text-align:center;letter-spacing:3px;background:#f5f5f7;border:none;border-radius:10px;outline:none;color:#1d1d1f;text-transform:uppercase;box-sizing:border-box}
+.modal-err{display:block;font-size:12px;color:#FF3B30;margin-top:4px;text-align:center}
+.modal-btns{display:flex;border-top:0.5px solid rgba(0,0,0,.06)}
+.modal-btn{flex:1;text-align:center;padding:14px 0;font-size:15px;cursor:pointer;border:none;background:none}
+.modal-btn.cancel{color:#86868b}
+.modal-btn.confirm{color:#007AFF;font-weight:600}
+
 @media (prefers-color-scheme:dark){
 body{background:#1C1C1E;color:#F5F5F7}
 .card{background:#2C2C2E;box-shadow:none}
@@ -163,6 +192,21 @@ select.ff-trigger:invalid{color:#48484A}
 .nav-label{color:#98989D}
 .nav-item.active .nav-svg{color:#0A84FF}
 .nav-item.active .nav-label{color:#0A84FF}
+#recordsList .rec-card{background:#3A3A3C}
+#recordsList .rec-abbr{color:#0A84FF}
+#recordsList .rec-info{color:#98989D}
+#recordsList .rec-days{color:#F5F5F7}
+#recordsList .rec-days.warn{color:#FF453A}
+#recordsList .rec-badge{color:#FF453A;background:#4A2020}
+#recordsList .rec-foot{border-color:#38383A}
+#recordsList .empty{color:#48484A}
+.modal-box{background:#2C2C2E}
+.modal-hd{color:#F5F5F7}
+.modal-lbl{color:#98989D}
+.modal-ipt{background:#3A3A3C;color:#F5F5F7}
+.modal-btn.cancel{color:#98989D}
+.modal-btn.confirm{color:#0A84FF}
+.modal-btns{border-color:#38383A}
 }
 </style>
 </head>
@@ -240,6 +284,8 @@ select.ff-trigger:invalid{color:#48484A}
     <div id="gapBody"></div>
   </div>
 
+  <button class="btn btn-primary save-btn" type="button" onclick="showSaveDialog()">保存记录</button>
+
 </div>
 
 <!-- Tab 1: 日期工具 -->
@@ -290,7 +336,16 @@ select.ff-trigger:invalid{color:#48484A}
       <span class="num" id="offsetNum"></span>
     </div>
   </div>
+  </div>
+
+<!-- Tab 2: 保存记录 -->
+<div id="tab2" class="tab-content hide">
+  <div class="card">
+    <div class="card-hd">保存的记录</div>
+    <div id="recordsList"></div>
+  </div>
 </div>
+
 </div>
 
 <div class="footer">本工具仅供参考，实际用药请遵医嘱</div>
@@ -303,6 +358,24 @@ select.ff-trigger:invalid{color:#48484A}
   <div class="nav-item" data-tab="1" onclick="switchTab(1)">
     <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="nav-svg"><rect x="3" y="5" width="16" height="14" rx="2"/><path d="M7 2v4M15 2v4M3 9h16"/></svg>
     <span class="nav-label">日期工具</span>
+  </div>
+  <div class="nav-item" data-tab="2" onclick="switchTab(2)">
+    <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="nav-svg"><line x1="4" y1="6" x2="18" y2="6"/><line x1="4" y1="11" x2="18" y2="11"/><line x1="4" y1="16" x2="18" y2="16"/></svg>
+    <span class="nav-label">记录</span>
+  </div>
+</div>
+
+<div class="modal-overlay hide" id="saveOverlay" onclick="cancelSave()"></div>
+<div class="modal-box hide" id="saveDialog">
+  <div class="modal-hd" id="saveDialogTitle">保存记录</div>
+  <div class="modal-body">
+    <label class="modal-lbl">输入缩写（4位字母）</label>
+    <input class="modal-ipt" id="saveAbbrInput" maxlength="4" placeholder="如 MTX1" oninput="onSaveAbbrInput(this)" autofocus/>
+    <span class="modal-err hide" id="saveAbbrError"></span>
+  </div>
+  <div class="modal-btns">
+    <button class="modal-btn cancel" type="button" onclick="cancelSave()">取消</button>
+    <button class="modal-btn confirm" type="button" onclick="confirmSave()">确认</button>
   </div>
 </div>
 
@@ -352,7 +425,7 @@ function calcSupply(qty,dose,freq){
 }
 
 // ==== State ====
-let state={drugByCat:{},medName:'',freq:'QD',unit:'片',prescList:[],idCounter:0}
+let state={drugByCat:{},medName:'',freq:'QD',unit:'片',prescList:[],idCounter:0,editRecordId:null}
 
 function buildDrugIndex(){
   const by={};for(const[n,i]of Object.entries(drugDB)){if(!by[i.cat])by[i.cat]=[];by[i.cat].push(n)}
@@ -372,6 +445,7 @@ function init(){
   fs.innerHTML=freqOpts.map((f,i)=>`<option value="${f.val}" ${i===0?'selected':''}>${f.label}</option>`).join('')
 }
 init()
+loadRecords()
 
 // ==== Tab ====
 function switchTab(n){
@@ -474,7 +548,7 @@ function renderList(){
 }
 
 function delPresc(id){state.prescList=state.prescList.filter(p=>p.id!==id);renderList();hideGap()}
-function clearList(){state.prescList=[];state.idCounter=0;renderList();hideGap()}
+function clearList(){state.prescList=[];state.idCounter=0;state.editRecordId=null;renderList();hideGap()}
 function hideGap(){document.getElementById('gapResult').classList.add('hide')}
 
 // ==== Analyze gaps ====
@@ -527,6 +601,123 @@ function analyze(){
   html+='</div>'
   document.getElementById('gapBody').innerHTML=html
   document.getElementById('gapResult').classList.remove('hide')
+}
+
+// ==== Records ====
+const STORAGE_KEY = 'calc_records'
+
+function loadRecords() {
+  const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+  const now = new Date()
+  const list = raw.map(r => {
+    const days = calcRecordDays(r.prescList)
+    return { ...r, remainingDays: days, saveDateStr: fmtDate(new Date(r.lastSaved)) }
+  })
+  list.sort((a, b) => b.lastSaved - a.lastSaved)
+  renderRecords(list)
+}
+
+function calcRecordDays(prescList) {
+  if (!prescList || prescList.length === 0) return -1
+  const sorted = [...prescList].sort((a, b) => a.prescDate.localeCompare(b.prescDate))
+  let remainPills = +sorted[0].totalQty
+  let currentDose = sorted[0].dailyDose
+  let lastDate = parseDate(sorted[0].prescDate)
+  for (let i = 1; i < sorted.length; i++) {
+    const p = sorted[i], cd = parseDate(p.prescDate), elapsed = diffDays(lastDate, cd), need = elapsed * currentDose
+    if (need > remainPills) { remainPills = 0 } else { remainPills -= need }
+    remainPills += +p.totalQty; currentDose = p.dailyDose; lastDate = cd
+  }
+  return Math.max(0, Math.floor(remainPills / currentDose))
+}
+
+function renderRecords(list) {
+  const el = document.getElementById('recordsList')
+  if (!list.length) { el.innerHTML = '<div class="empty">暂无保存记录</div>'; return }
+  el.innerHTML = list.map(r => `<div class="rec-card">
+    <div class="rec-head"><span class="rec-abbr">${r.abbr}</span>
+      <div class="rec-actions"><span class="rec-btn edit" onclick="editRecord(${r.id})">编辑</span><span class="rec-btn del" onclick="deleteRecord(${r.id})">删除</span></div>
+    </div>
+    <div class="rec-body"><span class="rec-info">${r.medName} ｜ ${r.prescList.length}次处方</span><span class="rec-info">保存于 ${r.saveDateStr}</span></div>
+    <div class="rec-foot"><span class="rec-days ${r.remainingDays>=0 && r.remainingDays<=7?'warn':''}">${r.remainingDays>=0?'剩余 '+r.remainingDays+' 天':'已过期'}</span>${r.remainingDays>=0 && r.remainingDays<=7?'<span class="rec-badge">⚠️ 即将用完</span>':''}</div>
+  </div>`).join('')
+}
+
+function showSaveDialog() {
+  if (state.prescList.length === 0) { alert('暂无处方记录可保存'); return }
+  const editId = state.editRecordId
+  let abbr = ''
+  if (editId) {
+    const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+    const rec = records.find(r => r.id === editId)
+    if (rec) abbr = rec.abbr
+  }
+  document.getElementById('saveAbbrInput').value = abbr
+  document.getElementById('saveAbbrError').classList.add('hide')
+  document.getElementById('saveDialogTitle').textContent = editId ? '更新记录' : '保存记录'
+  document.getElementById('saveOverlay').classList.remove('hide')
+  document.getElementById('saveDialog').classList.remove('hide')
+  document.getElementById('saveAbbrInput').focus()
+}
+
+function onSaveAbbrInput(input) {
+  input.value = input.value.replace(/[^a-zA-Z]/g, '').slice(0, 4).toUpperCase()
+}
+
+function confirmSave() {
+  const input = document.getElementById('saveAbbrInput')
+  const abbr = input.value.trim()
+  if (abbr.length !== 4) { document.getElementById('saveAbbrError').textContent = '请输入4位字母'; document.getElementById('saveAbbrError').classList.remove('hide'); return }
+  const editId = state.editRecordId
+  const record = {
+    id: editId || Date.now(),
+    abbr,
+    medName: state.medName,
+    prescList: state.prescList.map(p => ({...p})),
+    drugUnit: state.unit,
+    lastSaved: Date.now(),
+    dosePerTime: document.getElementById('dosePerTime').value,
+    freqVal: document.getElementById('freqSelect').value
+  }
+  let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+  const idx = records.findIndex(r => r.id === record.id)
+  if (idx >= 0) { records[idx] = record } else { records.push(record) }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records))
+  cancelSave()
+  state.editRecordId = null
+  loadRecords()
+  alert(idx >= 0 ? '已更新' : '已保存')
+}
+
+function cancelSave() {
+  document.getElementById('saveOverlay').classList.add('hide')
+  document.getElementById('saveDialog').classList.add('hide')
+}
+
+function deleteRecord(id) {
+  if (!confirm('确定删除此记录？')) return
+  let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+  records = records.filter(r => r.id !== id)
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records))
+  loadRecords()
+}
+
+function editRecord(id) {
+  const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+  const rec = records.find(r => r.id === id)
+  if (!rec) { alert('记录不存在'); return }
+  state.editRecordId = id
+  state.medName = rec.medName
+  state.unit = rec.drugUnit
+  state.prescList = rec.prescList.map(p => ({...p}))
+  document.getElementById('dosePerTime').value = rec.dosePerTime || ''
+  document.getElementById('freqSelect').value = rec.freqVal || 'QD'
+  document.getElementById('medName').textContent = rec.medName
+  document.getElementById('prescForm').classList.remove('hide')
+  document.getElementById('actionBtns').classList.remove('hide')
+  document.getElementById('multiSection').classList.remove('hide')
+  switchTab(0)
+  alert('正在编辑 ' + rec.abbr)
 }
 
 // ==== Date tools ====

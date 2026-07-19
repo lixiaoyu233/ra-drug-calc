@@ -437,10 +437,6 @@ Page({
     this.initDrugPicker()
   },
 
-  copyResult() {
-    wx.setClipboardData({ data: this.data.resultText, success: () => wx.showToast({ title: '已复制', icon: 'success' }) })
-  },
-
   /* ====== Date Diff Tab ====== */
   bindDateDiff() {
     const d = this.data

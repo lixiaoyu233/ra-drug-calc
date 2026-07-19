@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>风免计算器</title>
+<script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.18.0/dist/pinyin-pro.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;color:#1C1C1E;padding:12px 14px 90px;max-width:480px;margin:0 auto;min-height:100vh}
@@ -648,7 +649,23 @@ function showSaveDialog() {
 }
 
 function onSaveAbbrInput(input) {
-  input.value = input.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
+  let v = input.value
+  if (/[\u4e00-\u9fff]/.test(v)) {
+    if (window.pinyinPro) {
+      const arr = window.pinyinPro.pinyin(v, { toneType: 'none', type: 'array' })
+      input.value = abbrFromPinyin(arr).slice(0, 4)
+    }
+  } else {
+    input.value = v.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
+  }
+}
+
+function abbrFromPinyin(arr) {
+  const n = arr.length
+  if (n >= 4) return arr.slice(0, 4).map(s => s[0].toUpperCase()).join('')
+  if (n === 3) return (arr[0][0] + arr[1][0] + arr[2].slice(0, 2)).toUpperCase()
+  if (n === 2) return (arr[0].slice(0, 2) + arr[1].slice(0, 2)).toUpperCase()
+  return arr[0].slice(0, 4).toUpperCase()
 }
 
 function confirmSave() {

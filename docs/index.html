@@ -9,6 +9,10 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <script src="drug-data.js"></script>
+<script type="module">
+import pinyinPro from './pinyin-pro.mjs'
+window.py = pinyinPro
+</script>
 <title>风免计算器</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -642,7 +646,23 @@ function showSaveDialog() {
 }
 
 function onSaveAbbrInput(input) {
-  input.value = input.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
+  let v = input.value
+  if (/[\u4e00-\u9fff]/.test(v)) {
+    if (window.py) {
+      v = window.py.pinyin(v, { toneType: 'none', type: 'array' })
+      input.value = abbrFromPinyin(v).slice(0, 4)
+    }
+  } else {
+    input.value = v.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
+  }
+}
+
+function abbrFromPinyin(arr) {
+  const n = arr.length
+  if (n >= 4) return arr.slice(0, 4).map(s => s[0].toUpperCase()).join('')
+  if (n === 3) return (arr[0][0] + arr[1][0] + arr[2].slice(0, 2)).toUpperCase()
+  if (n === 2) return (arr[0].slice(0, 2) + arr[1].slice(0, 2)).toUpperCase()
+  return arr[0].slice(0, 4).toUpperCase()
 }
 
 function confirmSave() {

@@ -1,4 +1,5 @@
 const util = require('../../utils/date')
+const pinyinPro = require('../../utils/pinyin-pro')
 
 const drugDB = {
   '甲氨蝶呤': { cat: 'csDMARDs', spec: '2.5mg', unit: '片', freq: 'QW', dose: '4', note: '常用剂量 7.5-15mg/周（3-6片/周），每周固定一天服用' },
@@ -502,8 +503,24 @@ Page({
   },
 
   onSaveAbbrInput(e) {
-    let v = (e.detail.value || '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
+    let v = e.detail.value || ''
+    if (/[\u4e00-\u9fff]/.test(v)) {
+      try {
+        const arr = pinyinPro.pinyin(v, { toneType: 'none', type: 'array' })
+        v = this.abbrFromPinyin(arr).slice(0, 4)
+      } catch(e) { v = v.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase() }
+    } else {
+      v = v.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
+    }
     this.setData({ saveAbbr: v, saveAbbrError: '' })
+  },
+
+  abbrFromPinyin(arr) {
+    const n = arr.length
+    if (n >= 4) return arr.slice(0, 4).map(s => s[0].toUpperCase()).join('')
+    if (n === 3) return (arr[0][0] + arr[1][0] + arr[2].slice(0, 2)).toUpperCase()
+    if (n === 2) return (arr[0].slice(0, 2) + arr[1].slice(0, 2)).toUpperCase()
+    return arr[0].slice(0, 4).toUpperCase()
   },
 
   confirmSave() {

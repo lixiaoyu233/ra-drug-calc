@@ -41,7 +41,7 @@
           <view wx:for="{{weekDays}}" wx:key="*this" class="cal-wd">{{item}}</view>
         </view>
         <view class="cal-days">
-          <view wx:for="{{calDayRows}}" wx:key="idx" class="cal-row">
+          <view wx:for="{{calDayRows}}" wx:key="*this" class="cal-row">
             <view wx:for="{{item}}" wx:for-item="cell" wx:key="day" class="cal-cell {{cell.fill?'fill':''}}">
               <view wx:if="{{!cell.fill}}" class="cal-day {{cell.isToday?'today':''}} {{cell.isSelected?'selected':''}}" data-day="{{cell.day}}" data-target="cal" bindtap="calSelectDate">{{cell.day}}</view>
             </view>
@@ -198,7 +198,7 @@
           <view wx:for="{{weekDays}}" wx:key="*this" class="cal-wd">{{item}}</view>
         </view>
         <view class="cal-days">
-          <view wx:for="{{date1DayRows}}" wx:key="idx" class="cal-row">
+          <view wx:for="{{date1DayRows}}" wx:key="*this" class="cal-row">
             <view wx:for="{{item}}" wx:for-item="cell" wx:key="day" class="cal-cell {{cell.fill?'fill':''}}">
               <view wx:if="{{!cell.fill}}" class="cal-day {{cell.isToday?'today':''}} {{cell.isSelected?'selected':''}}" data-day="{{cell.day}}" data-target="date1" bindtap="calSelectDate">{{cell.day}}</view>
             </view>
@@ -221,7 +221,7 @@
           <view wx:for="{{weekDays}}" wx:key="*this" class="cal-wd">{{item}}</view>
         </view>
         <view class="cal-days">
-          <view wx:for="{{date2DayRows}}" wx:key="idx" class="cal-row">
+          <view wx:for="{{date2DayRows}}" wx:key="*this" class="cal-row">
             <view wx:for="{{item}}" wx:for-item="cell" wx:key="day" class="cal-cell {{cell.fill?'fill':''}}">
               <view wx:if="{{!cell.fill}}" class="cal-day {{cell.isToday?'today':''}} {{cell.isSelected?'selected':''}}" data-day="{{cell.day}}" data-target="date2" bindtap="calSelectDate">{{cell.day}}</view>
             </view>
@@ -255,7 +255,7 @@
           <view wx:for="{{weekDays}}" wx:key="*this" class="cal-wd">{{item}}</view>
         </view>
         <view class="cal-days">
-          <view wx:for="{{calcDateDayRows}}" wx:key="idx" class="cal-row">
+          <view wx:for="{{calcDateDayRows}}" wx:key="*this" class="cal-row">
             <view wx:for="{{item}}" wx:for-item="cell" wx:key="day" class="cal-cell {{cell.fill?'fill':''}}">
               <view wx:if="{{!cell.fill}}" class="cal-day {{cell.isToday?'today':''}} {{cell.isSelected?'selected':''}}" data-day="{{cell.day}}" data-target="calcDate" bindtap="calSelectDate">{{cell.day}}</view>
             </view>
@@ -343,19 +343,19 @@
   <view class="bottom-nav">
     <view class="nav-item {{activeTab===0?'active':''}}" data-index="0" bindtap="switchTab">
       <view class="nav-icon">
-        <image src="{{activeTab===0?iconPillActive:iconPillInactive}}" mode="aspectFit" style="width:24px;height:24px"></image>
+        <image src="{{isDark?(activeTab===0?iconPillActiveDark:iconPillInactiveDark):(activeTab===0?iconPillActive:iconPillInactive)}}" mode="aspectFit" style="width:24px;height:24px"></image>
       </view>
       <text class="nav-label">处方计算</text>
     </view>
     <view class="nav-item {{activeTab===1?'active':''}}" data-index="1" bindtap="switchTab">
       <view class="nav-icon">
-        <image src="{{activeTab===1?iconCalActive:iconCalInactive}}" mode="aspectFit" style="width:24px;height:24px"></image>
+        <image src="{{isDark?(activeTab===1?iconCalActiveDark:iconCalInactiveDark):(activeTab===1?iconCalActive:iconCalInactive)}}" mode="aspectFit" style="width:24px;height:24px"></image>
       </view>
       <text class="nav-label">日期工具</text>
     </view>
     <view class="nav-item {{activeTab===2?'active':''}}" data-index="2" bindtap="switchTab">
       <view class="nav-icon">
-        <image src="{{activeTab===2?iconListActive:iconListInactive}}" mode="aspectFit" style="width:24px;height:24px"></image>
+        <image src="{{isDark?(activeTab===2?iconListActiveDark:iconListInactiveDark):(activeTab===2?iconListActive:iconListInactive)}}" mode="aspectFit" style="width:24px;height:24px"></image>
       </view>
       <text class="nav-label">记录</text>
     </view>

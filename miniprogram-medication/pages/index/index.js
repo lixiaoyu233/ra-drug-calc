@@ -102,6 +102,16 @@ Page({
     iconListActive: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDA3QUZGIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48bGluZSB4MT0iNCIgeTE9IjYiIHgyPSIxOCIgeTI9IjYiLz48bGluZSB4MT0iNCIgeTE9IjExIiB4Mj0iMTgiIHkyPSIxMSIvPjxsaW5lIHgxPSI0IiB5MT0iMTYiIHgyPSIxOCIgeTI9IjE2Ii8+PC9zdmc+",
     iconListInactive: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjODY4NjhiIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48bGluZSB4MT0iNCIgeTE9IjYiIHgyPSIxOCIgeTI9IjYiLz48bGluZSB4MT0iNCIgeTE9IjExIiB4Mj0iMTgiIHkyPSIxMSIvPjxsaW5lIHgxPSI0IiB5MT0iMTYiIHgyPSIxOCIgeTI9IjE2Ii8+PC9zdmc+",
 
+    // Dark mode icon variants
+    iconPillActiveDark: "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjIgMjIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMEE4NEZGIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSI3IiB5PSI2IiB3aWR0aD0iOCIgaGVpZ2h0PSIxMiIgcng9IjIiLz48cmVjdCB4PSI5IiB5PSIzIiB3aWR0aD0iNCIgaGVpZ2h0PSIzIiByeD0iLjUiLz48L3N2Zz4=",
+    iconPillInactiveDark: "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjIgMjIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTg5ODlEIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSI3IiB5PSI2IiB3aWR0aD0iOCIgaGVpZ2h0PSIxMiIgcng9IjIiLz48cmVjdCB4PSI5IiB5PSIzIiB3aWR0aD0iNCIgaGVpZ2h0PSIzIiByeD0iLjUiLz48L3N2Zz4=",
+    iconCalActiveDark: "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjIgMjIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMEE4NEZGIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIzIiB5PSI1IiB3aWR0aD0iMTYiIGhlaWdodD0iMTQiIHJ4PSIyIi8+PHBhdGggZD0iTTcgMnY0TTE1IDJ2NE0zIDloMTYiLz48L3N2Zz4=",
+    iconCalInactiveDark: "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjIgMjIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTg5ODlEIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIzIiB5PSI1IiB3aWR0aD0iMTYiIGhlaWdodD0iMTQiIHJ4PSIyIi8+PHBhdGggZD0iTTcgMnY0TTE1IDJ2NE0zIDloMTYiLz48L3N2Zz4=",
+    iconListActiveDark: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMEE4NEZGIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48bGluZSB4MT0iNCIgeTE9IjYiIHgyPSIxOCIgeTI9IjYiLz48bGluZSB4MT0iNCIgeTE9IjExIiB4Mj0iMTgiIHkyPSIxMSIvPjxsaW5lIHgxPSI0IiB5MT0iMTYiIHgyPSIxOCIgeTI9IjE2Ii8+PC9zdmc+",
+    iconListInactiveDark: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTg5ODlEIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48bGluZSB4MT0iNCIgeTE9IjYiIHgyPSIxOCIgeTI9IjYiLz48bGluZSB4MT0iNCIgeTE9IjExIiB4Mj0iMTgiIHkyPSIxMSIvPjxsaW5lIHgxPSI0IiB5MT0iMTYiIHgyPSIxOCIgeTI9IjE2Ii8+PC9zdmc+",
+
+    isDark: false,
+
     savedRecords: [],
     editRecordId: null,
     showSaveDialog: false,
@@ -124,10 +134,19 @@ Page({
     this.buildCalendar(y, m, 'cal')
     this.initDrugPicker()
     this.loadRecords()
+    this.checkTheme()
+  },
+
+  checkTheme() {
+    try {
+      const sys = wx.getSystemInfoSync()
+      this.setData({ isDark: sys.theme === 'dark' })
+    } catch(e) {}
   },
 
   onShow() {
     this.loadRecords()
+    this.checkTheme()
   },
 
   initDrugPicker() {
@@ -186,7 +205,8 @@ Page({
       showForm: true,
       prescList: newList,
       idCounter: newIdCounter,
-      gapResult: null
+      gapResult: null,
+      showResult: false
     })
     if (clearMsg) wx.showToast({ title: clearMsg, icon: 'none' })
   },
@@ -324,7 +344,7 @@ Page({
     this.setData({ prescList: list, gapResult: null })
   },
 
-  clearList() { this.setData({ prescList: [], gapResult: null }) },
+  clearList() { this.setData({ prescList: [], idCounter: 0, gapResult: null }) },
 
   analyzeGaps() {
     const list = this.data.prescList

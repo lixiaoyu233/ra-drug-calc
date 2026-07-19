@@ -161,6 +161,8 @@ select.ff-trigger{color:#F5F5F7}
 #recordsList .rec-days.warn{color:#FF453A}
 #recordsList .rec-badge{color:#FF453A}
 #recordsList .rec-foot{border-color:#38383A}
+#recordsList .rec-btn.edit{color:#0A84FF}
+#recordsList .rec-btn.del{color:#FF453A}
 #recordsList .empty{color:#48484A}
 .modal-box{background:#2C2C2E}
 .modal-hd{color:#F5F5F7}
@@ -552,8 +554,6 @@ function analyze(){
   const target=90,tRemain=Math.max(0,target-contDays),contMet=contDays>=target
   const latest = sorted[sorted.length - 1]
   const pillsNeeded = contMet ? 0 : calcPillsNeeded(tRemain, latest.freqVal, latest.dosePerTime, latest.dailyDose)
-  document.getElementById('pillsNeededText').textContent = pillsNeeded + (latest.unit || '粒')
-  document.getElementById('pillsNeededRow').classList.toggle('hide', contMet)
   const suggestDate=addDays(finalEnd,-7),suggestStr=fmtDate(suggestDate)
   const remainDays=diffDays(new Date(),finalEnd),urgent=suggestStr<=todayStr()
   const gapSet=new Set(gaps.map(g=>g.index))

@@ -649,18 +649,13 @@ function showSaveDialog() {
 }
 
 function onSaveAbbrInput(input) {
-  let v = input.value
-  if (/[\u4e00-\u9fff]/.test(v)) {
-    if (window.pinyinPro) {
-      const arr = window.pinyinPro.pinyin(v, { toneType: 'none', type: 'array' })
-      input.value = abbrFromPinyin(arr).slice(0, 4)
-    }
-  } else {
-    input.value = v.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
-  }
+  input.value = input.value.slice(0, 20)
 }
 
-function abbrFromPinyin(arr) {
+function abbrFromChinese(v) {
+  if (!/[\u4e00-\u9fff]/.test(v)) return v.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
+  if (!window.pinyinPro) return v.slice(0, 4).toUpperCase()
+  const arr = window.pinyinPro.pinyin(v, { toneType: 'none', type: 'array' })
   const n = arr.length
   if (n >= 4) return arr.slice(0, 4).map(s => s[0].toUpperCase()).join('')
   if (n === 3) return (arr[0][0] + arr[1][0] + arr[2].slice(0, 2)).toUpperCase()
@@ -672,8 +667,9 @@ function confirmSave() {
   try {
     const input = document.getElementById('saveAbbrInput')
     if (!input) { console.error('saveAbbrInput not found'); return }
-    const abbr = input.value.trim()
-    if (abbr.length !== 4) { document.getElementById('saveAbbrError').textContent = '请输入4位字母'; document.getElementById('saveAbbrError').classList.remove('hide'); return }
+    const abbr = abbrFromChinese(input.value)
+    input.value = abbr
+    if (abbr.length !== 4) { document.getElementById('saveAbbrError').textContent = '请输入4位字母或汉字'; document.getElementById('saveAbbrError').classList.remove('hide'); return }
     if (!state.medName) { alert('请先选择药物'); return }
     const record = {
       id: editRecordId || Date.now(),

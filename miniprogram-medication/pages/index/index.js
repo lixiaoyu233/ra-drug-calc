@@ -503,29 +503,26 @@ Page({
   },
 
   onSaveAbbrInput(e) {
-    let v = e.detail.value || ''
-    if (/[\u4e00-\u9fff]/.test(v)) {
-      try {
-        const arr = pinyinPro.pinyin(v, { toneType: 'none', type: 'array' })
-        v = this.abbrFromPinyin(arr).slice(0, 4)
-      } catch(e) { v = v.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase() }
-    } else {
-      v = v.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
-    }
+    let v = (e.detail.value || '').slice(0, 20)
     this.setData({ saveAbbr: v, saveAbbrError: '' })
   },
 
-  abbrFromPinyin(arr) {
-    const n = arr.length
-    if (n >= 4) return arr.slice(0, 4).map(s => s[0].toUpperCase()).join('')
-    if (n === 3) return (arr[0][0] + arr[1][0] + arr[2].slice(0, 2)).toUpperCase()
-    if (n === 2) return (arr[0].slice(0, 2) + arr[1].slice(0, 2)).toUpperCase()
-    return arr[0].slice(0, 4).toUpperCase()
+  abbrFromChinese(v) {
+    if (!/[\u4e00-\u9fff]/.test(v)) return v.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
+    try {
+      const arr = pinyinPro.pinyin(v, { toneType: 'none', type: 'array' })
+      const n = arr.length
+      if (n >= 4) return arr.slice(0, 4).map(s => s[0].toUpperCase()).join('')
+      if (n === 3) return (arr[0][0] + arr[1][0] + arr[2].slice(0, 2)).toUpperCase()
+      if (n === 2) return (arr[0].slice(0, 2) + arr[1].slice(0, 2)).toUpperCase()
+      return arr[0].slice(0, 4).toUpperCase()
+    } catch(e) { return v.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase() }
   },
 
   confirmSave() {
-    const abbr = this.data.saveAbbr.trim()
-    if (abbr.length !== 4) { this.setData({ saveAbbrError: '请输入4位字母' }); return }
+    const abbr = this.abbrFromChinese(this.data.saveAbbr)
+    this.setData({ saveAbbr: abbr })
+    if (abbr.length !== 4) { this.setData({ saveAbbrError: '请输入4位字母或汉字' }); return }
     const d = this.data
     const record = {
       id: d.editRecordId || Date.now(),

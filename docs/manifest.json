@@ -2,7 +2,7 @@
   "name": "风免计算器",
   "short_name": "风免计算器",
   "description": "风湿免疫科用药计算器，处方分析与断药监测",
-  "start_url": "./",
+  "start_url": "/Rheumatology-Calc/",
   "display": "standalone",
   "background_color": "#F2F2F7",
   "theme_color": "#007AFF",

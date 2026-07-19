@@ -8,5 +8,6 @@
     "navigationBarTextStyle": "white",
     "backgroundColor": "#F2F2F7"
   },
+  "darkmode": true,
   "sitemapLocation": "sitemap.json"
 }

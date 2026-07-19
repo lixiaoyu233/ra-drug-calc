@@ -106,3 +106,57 @@
 .gs-divider{height:0.5px;background:rgba(0,0,0,.06);margin:6px 0}
 
 .footer{text-align:center;font-size:12px;color:#c7c7cc;padding:20px 0 8px}
+
+@media (prefers-color-scheme:dark){
+.page{background:#1C1C1E;color:#F5F5F7}
+.tab-bar{background:rgba(28,28,30,.95)}
+.section{background:#2C2C2E;box-shadow:none}
+.section-header{color:#98989D}
+.ff-lbl{color:#98989D}
+.ff-val{color:#F5F5F7}
+.ff-trigger,.ff-ipt-row,.multi-picker-view{background:#3A3A3C;color:#F5F5F7}
+.ff-trigger{color:#0A84FF}
+.ff-ipt{color:#F5F5F7}
+.ff-unit,.hint,.mp-cat{color:#98989D}
+.mp-drug,.presc-title,.rc-title,.rc-val{color:#F5F5F7}
+.presc-card,.rc-text,.calendar-wrap{background:#3A3A3C}
+.presc-info,.rc-label,.gap-text,.rb-label,.gs-lbl{color:#98989D}
+.result-card{background:#2C2C2E;box-shadow:none}
+.result-card.warn{background:#3A2E1E}
+.rc-row+.rc-row,.rc-divider,.gs-divider,.gap-timeline{border-color:#38383A}
+.gap-summary-box{background:#1E2A3A}
+.gap-badge{background:#4A2020;color:#FF453A}
+.gap-none{color:#30D158}
+.gap-total,.gap-arrow{color:#98989D}
+.gap-num{color:#FF453A}
+.tl-line{background:#30D158}
+.tl-line.gap{background:#FF9F0A}
+.tl-dot{background:#0A84FF}
+.tl-cum{color:#0A84FF}
+.tl-date{color:#F5F5F7}
+.tl-days{color:#98989D}
+.result-box{background:#3A3A3C}
+.rb-num,.gs-val.blue,.rc-val.blue{color:#0A84FF}
+.gs-val.green{color:#30D158}
+.gs-val.warn{color:#FF9F0A}
+.gs-val.red,.rc-val.red{color:#FF453A}
+.gs-val.orange{color:#FF9F0A}
+.empty-state{color:#48484A}
+.btn-row .ios-btn.secondary,.dir-btn{background:#3A3A3C;color:#0A84FF}
+.dir-btn.active{background:#0A84FF;color:#fff}
+.dir-btn:not(.active){color:#98989D}
+.presc-del{color:#FF453A}
+.cal-nav{color:#0A84FF}
+.cal-title{color:#F5F5F7}
+.cal-wd{color:#98989D}
+.cal-day{color:#F5F5F7}
+.cal-day.today{color:#0A84FF}
+.cal-day.selected{background:#0A84FF;color:#fff}
+.ios-btn.primary{background:linear-gradient(180deg,#0A84FF,#0066CC)}
+.ios-btn.secondary{background:#3A3A3C;color:#0A84FF}
+.ios-btn.add-btn{border-color:#48484A;color:#0A84FF}
+.bottom-nav{background:rgba(28,28,30,.98);border-color:#38383A}
+.nav-label{color:#98989D}
+.nav-item.active .nav-label{color:#0A84FF}
+.footer{color:#48484A}
+}

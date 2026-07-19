@@ -131,8 +131,7 @@
           <view class="tl-line {{item.hasGapBefore?'gap':''}}"></view>
           <view class="tl-dot"></view>
           <view class="tl-text">
-            <text class="tl-date">第{{index+1}}次：{{item.prescDate}} → {{item.endDate}}</text>
-            <text class="tl-days">{{item.daysSupply}}天</text>
+            <text class="tl-date">第{{index+1}}次：{{item.prescDate}} → {{item.endDate}}<text class="tl-days">{{item.daysSupply}}天</text></text>
             <text wx:if="{{item.showCum}}" class="tl-cum">累计可到 {{item.cumEnd}}</text>
           </view>
         </view>

@@ -118,10 +118,10 @@
 .rec-btn.del{color:#FF3B30}
 .rec-body{display:flex;flex-direction:column;gap:2px;margin-bottom:6px}
 .rec-info{font-size:12px;color:#86868b;line-height:1.4}
-.rec-foot{display:flex;align-items:center;gap:8px;padding-top:6px;border-top:0.5px solid rgba(0,0,0,.04)}
+.rec-foot{display:flex;flex-direction:column;gap:4px;padding-top:8px;border-top:0.5px solid rgba(0,0,0,.04)}
 .rec-days{font-size:14px;font-weight:600;color:#1d1d1f}
 .rec-days.warn{color:#FF3B30}
-.rec-badge{font-size:11px;color:#FF3B30;background:#FFF2F0;padding:2px 6px;border-radius:3px}
+.rec-badge{font-size:12px;color:#FF3B30;background:none;padding:0;border-radius:0}
 
 /* ====== Save Dialog ====== */
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:200}
@@ -193,7 +193,6 @@
 .rec-info{color:#98989D}
 .rec-days{color:#F5F5F7}
 .rec-days.warn,.rec-badge{color:#FF453A}
-.rec-badge{background:#4A2020}
 .rec-foot{border-color:#38383A}
 .modal-box{background:#2C2C2E}
 .modal-hd{color:#F5F5F7}

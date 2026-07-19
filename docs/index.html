@@ -9,10 +9,7 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <script src="drug-data.js"></script>
-<script type="module">
-import pinyinPro from './pinyin-pro.mjs'
-window.py = pinyinPro
-</script>
+<script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.18.0/dist/pinyin-pro.min.js"></script>
 <title>风免计算器</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -651,8 +648,8 @@ function onSaveAbbrInput(input) {
 
 function abbrFromChinese(v) {
   if (!/[\u4e00-\u9fff]/.test(v)) return v.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
-  if (!window.py) return v.slice(0, 4).toUpperCase()
-  const arr = window.py.pinyin(v, { toneType: 'none', type: 'array' })
+  if (!window.pinyinPro) return v.slice(0, 4).toUpperCase()
+  const arr = window.pinyinPro.pinyin(v, { toneType: 'none', type: 'array' })
   const n = arr.length
   if (n >= 4) return arr.slice(0, 4).map(s => s[0].toUpperCase()).join('')
   if (n === 3) return (arr[0][0] + arr[1][0] + arr[2].slice(0, 2)).toUpperCase()

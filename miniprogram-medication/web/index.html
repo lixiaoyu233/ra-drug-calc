@@ -6,7 +6,7 @@
 <title>风免计算器</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;color:#1C1C1E;padding:12px 14px 30px;max-width:480px;margin:0 auto;min-height:100vh}
+body{background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;color:#1C1C1E;padding:12px 14px 90px;max-width:480px;margin:0 auto;min-height:100vh}
 .tabs{display:flex;background:#fff;border-radius:8px;overflow:hidden;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .tab{flex:1;text-align:center;padding:10px 0;font-size:14px;font-weight:500;color:#8E8E93;border-bottom:2px solid transparent;cursor:pointer}
 .tab.active{color:#007AFF;border-bottom-color:#007AFF;background:#f5f9ff}
@@ -78,14 +78,16 @@ select.ff-trigger:invalid{color:#C7C7CC}
 .result-box .sub{display:block;font-size:11px;color:#8E8E93;margin-top:2px}
 .hide{display:none!important}
 .footer{text-align:center;font-size:11px;color:#C7C7CC;padding:14px 0 4px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:rgba(250,250,252,.98);border-top:.5px solid rgba(0,0,0,.1);padding:6px 0 20px;z-index:100;max-width:480px;margin:0 auto}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:2px 0;cursor:pointer}
+.nav-icon{width:24px;height:24px}
+.nav-svg{width:24px;height:24px}
+.nav-label{font-size:11px;color:#86868b;font-weight:500}
+.nav-item.active .nav-label{color:#007AFF}
+.nav-item.active .nav-svg{color:#007AFF}
 </style>
 </head>
 <body>
-
-<div class="tabs" id="tabBar">
-  <div class="tab active" data-tab="0" onclick="switchTab(0)">处方计算</div>
-  <div class="tab" data-tab="1" onclick="switchTab(1)">日期工具</div>
-</div>
 
 <!-- Tab 0: 处方 -->
 <div id="tab0" class="tab-content">
@@ -211,6 +213,17 @@ select.ff-trigger:invalid{color:#C7C7CC}
 
 <div class="footer">本工具仅供参考，实际用药请遵医嘱</div>
 
+<div class="bottom-nav">
+  <div class="nav-item" data-tab="0" onclick="switchTab(0)">
+    <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="nav-svg"><rect x="7" y="6" width="8" height="12" rx="2"/><rect x="9" y="3" width="4" height="3" rx=".5"/></svg>
+    <span class="nav-label">处方计算</span>
+  </div>
+  <div class="nav-item" data-tab="1" onclick="switchTab(1)">
+    <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="nav-svg"><rect x="3" y="5" width="16" height="14" rx="2"/><path d="M7 2v4M15 2v4M3 9h16"/></svg>
+    <span class="nav-label">日期工具</span>
+  </div>
+</div>
+
 <script>
 // ==== Data ====
 const drugDB = {
@@ -280,7 +293,7 @@ init()
 
 // ==== Tab ====
 function switchTab(n){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===n))
+  document.querySelectorAll('.nav-item').forEach((t,i)=>t.classList.toggle('active',i===n))
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('hide',c.id!=='tab'+n))
 }
 

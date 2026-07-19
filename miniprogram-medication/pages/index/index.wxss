@@ -1,9 +1,10 @@
-.page{padding:12px 16px 24px;max-width:480px;margin:0 auto;min-height:100vh}
+.page{padding:12px 16px 90px;max-width:480px;margin:0 auto;min-height:100vh}
 
-.tab-bar{display:flex;position:sticky;top:0;z-index:10;background:rgba(245,245,247,.95);margin:0 -16px 10px;padding:0 16px}
-.tab-item{padding:8px 0 14px;font-size:13px;font-weight:500;color:#86868b;border-bottom:1.5px solid transparent;margin-bottom:-1px;flex:0 0 auto;min-width:90px}
-.tab-item+.tab-item{margin-left:24px}
-.tab-item.active{color:#1d1d1f;border-bottom-color:#007AFF;background:transparent}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:rgba(250,250,252,.98);border-top:0.5px solid rgba(0,0,0,.1);padding:6px 0 20px;z-index:100}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:2px 0}
+.nav-icon{display:flex;align-items:center;justify-content:center;width:24px;height:24px}
+.nav-label{font-size:11px;color:#86868b;font-weight:500}
+.nav-item.active .nav-icon,.nav-item.active .nav-label{color:#007AFF}
 
 .section{background:#fff;border-radius:14px;padding:18px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.03)}
 .section-header{font-size:13px;font-weight:600;color:#1d1d1f;margin-bottom:14px;letter-spacing:-.01em}

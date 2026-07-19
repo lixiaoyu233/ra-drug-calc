@@ -1,10 +1,5 @@
 <view class="page">
 
-  <view class="tab-bar">
-    <view class="tab-item {{activeTab===0?'active':''}}" data-index="0" bindtap="switchTab">处方计算</view>
-    <view class="tab-item {{activeTab===1?'active':''}}" data-index="1" bindtap="switchTab">日期工具</view>
-  </view>
-
   <!-- ====== Tab 1: Prescription ====== -->
   <view class="tab-content" wx:if="{{activeTab===0}}">
 
@@ -289,5 +284,20 @@
   </view>
 
   <view class="footer">本工具仅供参考，实际用药请遵医嘱</view>
+
+  <view class="bottom-nav">
+    <view class="nav-item {{activeTab===0?'active':''}}" data-index="0" bindtap="switchTab">
+      <view class="nav-icon">
+        <image src="{{activeTab===0?iconPillActive:iconPillInactive}}" mode="aspectFit" style="width:24px;height:24px"></image>
+      </view>
+      <text class="nav-label">处方计算</text>
+    </view>
+    <view class="nav-item {{activeTab===1?'active':''}}" data-index="1" bindtap="switchTab">
+      <view class="nav-icon">
+        <image src="{{activeTab===1?iconCalActive:iconCalInactive}}" mode="aspectFit" style="width:24px;height:24px"></image>
+      </view>
+      <text class="nav-label">日期工具</text>
+    </view>
+  </view>
 
 </view>

@@ -331,7 +331,7 @@
     <view class="modal-hd">{{editRecordId?'更新记录':'保存记录'}}</view>
     <view class="modal-body">
       <text class="modal-lbl">输入缩写（4位字母）</text>
-      <input class="modal-ipt" value="{{saveAbbr}}" bindinput="onSaveAbbrInput" maxlength="4" placeholder="如 MTX1" auto-focus="{{!editRecordId}}"/>
+      <input class="modal-ipt" value="{{saveAbbr}}" bindinput="onSaveAbbrInput" placeholder="如 MTX1" auto-focus="{{!editRecordId}}"/>
       <text class="modal-err" wx:if="{{saveAbbrError}}">{{saveAbbrError}}</text>
     </view>
     <view class="modal-btns">

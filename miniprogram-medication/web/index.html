@@ -669,7 +669,6 @@ function confirmSave() {
     if (!input) { console.error('saveAbbrInput not found'); return }
     const abbr = abbrFromChinese(input.value)
     input.value = abbr
-    if (abbr.length !== 4) { document.getElementById('saveAbbrError').textContent = '请输入4位字母或汉字'; document.getElementById('saveAbbrError').classList.remove('hide'); return }
     if (!state.medName) { alert('请先选择药物'); return }
     const record = {
       id: editRecordId || Date.now(),

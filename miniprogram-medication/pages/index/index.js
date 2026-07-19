@@ -522,7 +522,6 @@ Page({
   confirmSave() {
     const abbr = this.abbrFromChinese(this.data.saveAbbr)
     this.setData({ saveAbbr: abbr })
-    if (abbr.length !== 4) { this.setData({ saveAbbrError: '请输入4位字母或汉字' }); return }
     const d = this.data
     const record = {
       id: d.editRecordId || Date.now(),

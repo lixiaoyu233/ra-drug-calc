@@ -398,6 +398,8 @@ function calcSupply(qty,dose,freq){
 
 // ==== State ====
 let state={drugByCat:{},medName:'',freq:'QD',unit:'片',prescList:[],idCounter:0,editRecordId:null}
+const STORAGE_KEY = 'calc_records'
+let editRecordId = null
 
 function buildDrugIndex(){
   const by={};for(const[n,i]of Object.entries(drugDB)){if(!by[i.cat])by[i.cat]=[];by[i.cat].push(n)}
@@ -520,7 +522,7 @@ function renderList(){
 }
 
 function delPresc(id){state.prescList=state.prescList.filter(p=>p.id!==id);renderList();hideGap()}
-function clearList(){state.prescList=[];state.idCounter=0;renderList();hideGap()}
+function clearList(){state.prescList=[];state.idCounter=0;editRecordId=null;state.editRecordId=null;renderList();hideGap()}
 function hideGap(){document.getElementById('gapResult').classList.add('hide');document.getElementById('saveBtn').classList.add('hide')}
 
 // ==== Analyze gaps ====
@@ -580,8 +582,6 @@ function analyze(){
 }
 
 // ==== Records ====
-const STORAGE_KEY = 'calc_records'
-let editRecordId = null
 
 function loadRecords() {
   const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')

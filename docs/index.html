@@ -415,6 +415,7 @@ function calcPillsNeeded(targetRemain,freqVal,dosePerTime,dailyDose){
   if(bd){const pb=batchPills(freqVal,+dosePerTime)||+dosePerTime;return Math.ceil(targetRemain/bd)*pb}
   return Math.ceil(dailyDose*targetRemain)
 }
+const STORAGE_KEY = 'calc_records'
 
 // ==== Date utils ====
 function parseDate(s){if(!s)return new Date();const p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2])}

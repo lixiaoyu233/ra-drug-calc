@@ -2,7 +2,7 @@
   "name": "风免计算器",
   "short_name": "风免计算器",
   "description": "类风湿关节炎处方用药与日期计算工具",
-  "start_url": "/ra-drug-calc/",
+  "start_url": "/Rheumatology-Calc/",
   "display": "standalone",
   "background_color": "#F2F2F7",
   "theme_color": "#007AFF",

@@ -167,6 +167,10 @@
       </view>
     </view>
 
+    <view class="btn-row" wx:if="{{gapResult}}">
+      <view class="ios-btn primary" bindtap="showSaveDialog">{{editRecordId?'更新记录':'保存记录'}}</view>
+    </view>
+
   </view>
 
   <!-- ====== Tab 2: Date Tools ====== -->
@@ -279,11 +283,6 @@
         <text class="rb-label">{{calcDate}} {{calcDirection}} {{calcOffset}}{{calcUnit}}：</text>
         <text class="rb-num">{{calcResult}}</text>
       </view>
-    </view>
-
-    <!-- Save Button after gap analysis -->
-    <view class="btn-row" wx:if="{{gapResult}}">
-      <view class="ios-btn primary" bindtap="showSaveDialog">{{editRecordId?'更新记录':'保存记录'}}</view>
     </view>
 
   </view>

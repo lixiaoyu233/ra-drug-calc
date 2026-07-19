@@ -546,9 +546,9 @@ function analyze(){
   const contM=Math.floor(contDays/30),contD=contDays%30
   const target=90,tRemain=Math.max(0,target-contDays),contMet=contDays>=target
   const latest = sorted[sorted.length - 1]
-  const pillsNeeded = contMet ? 0 : calcPillsNeeded(tRemain, latest.freqVal, latest.dosePerTime, latest.dailyDose)
   const suggestDate=addDays(finalEnd,-7),suggestStr=fmtDate(suggestDate)
   const remainDays=diffDays(new Date(),finalEnd),urgent=suggestStr<=todayStr()
+  const pillsNeeded = contMet ? 0 : calcPillsNeeded(Math.max(0, tRemain - remainDays), latest.freqVal, latest.dosePerTime, latest.dailyDose)
   const gapSet=new Set(gaps.map(g=>g.index))
 
   let html='<span style="font-size:12px;color:#636366">共 '+list.length+' 次处方</span>'
@@ -611,7 +611,7 @@ function calcRecordDays(prescList) {
   const target = 90
   const targetRemain = Math.max(0, target - contTotalDays)
   const contMet = contTotalDays >= target
-  const pillsNeeded = contMet ? 0 : calcPillsNeeded(targetRemain, sorted[sorted.length-1].freqVal, sorted[sorted.length-1].dosePerTime, currentDose)
+  const pillsNeeded = contMet ? 0 : calcPillsNeeded(Math.max(0, targetRemain - remainingDays), sorted[sorted.length-1].freqVal, sorted[sorted.length-1].dosePerTime, currentDose)
   return { remainingDays, endDate: finalDate, contDays: contTotalDays, contMet, targetRemain, pillsNeeded, unit: sorted[sorted.length - 1]?.unit || '粒' }
 }
 

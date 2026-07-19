@@ -417,7 +417,7 @@ Page({
     const todayStr = util.formatDate(new Date())
     const remainingDays = util.diffDays(new Date(), finalEnd)
     const refillUrgent = suggestStr <= todayStr
-    const pillsNeeded = contMet ? 0 : this.calcPillsNeeded(targetRemain, latest.freqVal, latest.dosePerTime, latest.dailyDose)
+    const pillsNeeded = contMet ? 0 : this.calcPillsNeeded(Math.max(0, targetRemain - remainingDays), latest.freqVal, latest.dosePerTime, latest.dailyDose)
     this.setData({
       gapResult: {
         gaps, totalGapDays, sorted: entries, count: list.length,
@@ -490,7 +490,7 @@ Page({
     const target = 90
     const targetRemain = Math.max(0, target - contTotalDays)
     const contMet = contTotalDays >= target
-    const pillsNeeded = contMet ? 0 : this.calcPillsNeeded(targetRemain, sorted[sorted.length - 1].freqVal, sorted[sorted.length - 1].dosePerTime, currentDose)
+    const pillsNeeded = contMet ? 0 : this.calcPillsNeeded(Math.max(0, targetRemain - remainingDays), sorted[sorted.length - 1].freqVal, sorted[sorted.length - 1].dosePerTime, currentDose)
     return { remainingDays, endDate: finalDate, contDays: contTotalDays, contMet, targetRemain, pillsNeeded, unit: sorted[sorted.length - 1]?.unit || '粒' }
   },
 

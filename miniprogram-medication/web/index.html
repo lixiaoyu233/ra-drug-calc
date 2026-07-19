@@ -652,25 +652,29 @@ function onSaveAbbrInput(input) {
 }
 
 function confirmSave() {
-  const input = document.getElementById('saveAbbrInput')
-  const abbr = input.value.trim()
-  if (abbr.length !== 4) { document.getElementById('saveAbbrError').textContent = '请输入4位字母'; document.getElementById('saveAbbrError').classList.remove('hide'); return }
-  const record = {
-    id: editRecordId || Date.now(),
-    abbr, medName: state.medName,
-    prescList: state.prescList.map(p => ({...p})),
-    drugUnit: state.unit, lastSaved: Date.now(),
-    dosePerTime: document.getElementById('dosePerTime').value,
-    freqVal: document.getElementById('freqSelect').value
-  }
-  let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-  const idx = records.findIndex(r => r.id === record.id)
-  if (idx >= 0) { records[idx] = record } else { records.push(record) }
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(records))
-  cancelSave()
-  editRecordId = null
-  loadRecords()
-  alert(idx >= 0 ? '已更新' : '已保存')
+  try {
+    const input = document.getElementById('saveAbbrInput')
+    if (!input) { console.error('saveAbbrInput not found'); return }
+    const abbr = input.value.trim()
+    if (abbr.length !== 4) { document.getElementById('saveAbbrError').textContent = '请输入4位字母'; document.getElementById('saveAbbrError').classList.remove('hide'); return }
+    if (!state.medName) { alert('请先选择药物'); return }
+    const record = {
+      id: editRecordId || Date.now(),
+      abbr, medName: state.medName,
+      prescList: state.prescList.map(p => ({...p})),
+      drugUnit: state.unit, lastSaved: Date.now(),
+      dosePerTime: document.getElementById('dosePerTime')?.value || '',
+      freqVal: document.getElementById('freqSelect')?.value || ''
+    }
+    let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+    const idx = records.findIndex(r => r.id === record.id)
+    if (idx >= 0) { records[idx] = record } else { records.push(record) }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(records))
+    cancelSave()
+    editRecordId = null
+    loadRecords()
+    alert(idx >= 0 ? '已更新' : '已保存')
+  } catch(e) { console.error('confirmSave error:', e); alert('保存失败: ' + e.message) }
 }
 
 function cancelSave() {

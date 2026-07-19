@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="manifest" href="/ra-drug-calc/manifest.json">
-<link rel="apple-touch-icon" href="/ra-drug-calc/icon.svg">
-<link rel="icon" href="/ra-drug-calc/icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <title>风免计算器</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -42,13 +42,13 @@ select.ff-trigger:invalid{color:#c7c7cc}
 /* ====== Buttons (Apple style, pill-shaped) ====== */
 .btn{height:44px;border-radius:22px;font-size:15px;font-weight:500;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 28px;transition:all .2s}
 .btn-primary{background:linear-gradient(180deg,#007AFF,#0066d6);color:#fff;box-shadow:0 2px 8px rgba(0,122,255,.3)}
-.card .btn{width:100%;flex:none}
+.card .btn{width:100%}
 .btn-row{display:flex;gap:10px;margin:6px 0}
 .btn-row .btn{flex:1;width:auto}
 .btn-row .btn-primary{flex:1;width:auto}
 .btn-primary:active{transform:scale(.97);box-shadow:0 1px 4px rgba(0,122,255,.2)}
-.btn-secondary{background:#f5f5f7;color:#007AFF;flex:1}
-.btn-secondary:active{background:#e8e8ed}
+.btn-secondary{background:#f5f5f7;color:#007AFF}
+.btn-secondary:active{background:#e8e8ed;transform:scale(.97)}
 .btn-small{height:34px;border-radius:17px;font-size:13px;font-weight:500;background:#f5f5f7;color:#007AFF;border:none;cursor:pointer;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;transition:all .2s}
 .btn-small:active{background:#e8e8ed}
 .btn-add{background:none;border:1.5px dashed #c7c7cc;color:#007AFF;height:40px;border-radius:20px;width:100%;font-size:14px;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .2s}
@@ -60,7 +60,7 @@ select.ff-trigger:invalid{color:#c7c7cc}
 .empty{text-align:center;padding:20px 0 10px;font-size:14px;color:#c7c7cc}
 .presc-card{background:#f9f9fb;border-radius:12px;padding:12px 14px;margin-bottom:8px}
 .presc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
-.presc-title{font-size:14px;font-weight:600;color:#1d1d1f}
+.presc-title{font-size:14px;font-weight:600;color:#1d1d1f;word-break:break-all}
 .presc-body{font-size:13px;color:#86868b;line-height:1.5}
 
 /* ====== Result Cards ====== */
@@ -169,8 +169,8 @@ select.ff-trigger:invalid{color:#c7c7cc}
   </div>
 
   <div class="btn-row hide" id="actionBtns">
-    <button class="btn btn-primary" onclick="calcOnce()">计算单次</button>
-    <button class="btn btn-secondary" onclick="resetForm()">清空</button>
+    <button class="btn btn-primary" type="button" onclick="calcOnce()">计算单次</button>
+    <button class="btn btn-secondary" type="button" onclick="resetForm()">清空</button>
   </div>
 
   <div class="card result hide" id="singleResult">
@@ -184,12 +184,12 @@ select.ff-trigger:invalid{color:#c7c7cc}
 
   <div class="card hide" id="multiSection">
     <div class="card-hd">多次处方列表</div>
-    <button class="btn-add" onclick="addPresc()">+ 添加此处方到列表</button>
+    <button class="btn-add" type="button" onclick="addPresc()">+ 添加此处方到列表</button>
     <div class="empty" id="listEmpty">暂无处方记录</div>
     <div id="prescList"></div>
     <div class="btn-row hide" id="gapBtns">
-      <button class="btn btn-primary" onclick="analyze()">分析断药</button>
-      <button class="btn btn-secondary" onclick="clearList()">清空列表</button>
+      <button class="btn btn-primary" type="button" onclick="analyze()">分析断药</button>
+      <button class="btn btn-secondary" type="button" onclick="clearList()">清空列表</button>
     </div>
   </div>
 
@@ -212,7 +212,7 @@ select.ff-trigger:invalid{color:#c7c7cc}
       <label class="ff-lbl">结束日期</label>
       <input class="ff-trigger" type="date" id="d2">
     </div>
-    <button class="btn btn-primary" onclick="calcDiff()">计算相差天数</button>
+    <button class="btn btn-primary" type="button" onclick="calcDiff()">计算相差天数</button>
     <div class="result-box hide" id="diffResult">
       <span>相差</span><span class="num" id="diffNum">0</span><span>天</span>
       <span class="sub" id="diffSub"></span>
@@ -241,7 +241,7 @@ select.ff-trigger:invalid{color:#c7c7cc}
       </div>
       <div class="ff">
         <label class="ff-lbl">&nbsp;</label>
-        <button class="btn btn-primary" onclick="calcOffset()">推算</button>
+        <button class="btn btn-primary" type="button" onclick="calcOffset()">推算</button>
       </div>
     </div>
     <div class="result-box hide" id="offsetResult">
@@ -265,7 +265,7 @@ const drugDB = {
   '巴瑞替尼':{cat:'tsDMARDs',spec:'2mg',unit:'片',freq:'QD',dose:'1',note:'常用剂量 2-4mg/日 QD（每日1次，1-2片），老年人减量'},
   '乌帕替尼':{cat:'tsDMARDs',spec:'15mg',unit:'片',freq:'QD',dose:'1',note:'常用剂量 15mg/日 QD（每日1次，1片缓释片）'},
   '依那西普':{cat:'bDMARDs',spec:'25mg',unit:'支',freq:'BIW',dose:'1',note:'常用剂量 25mg/次 BIW（每周2次），皮下注射'},
-  '注射用重组人Ⅱ型肿瘤坏死因子受体-抗体融合蛋白':{cat:'bDMARDs',spec:'25mg',unit:'支',freq:'BIW',dose:'1',note:'益赛普/强克 25mg/次 BIW（每周2次），皮下注射'},
+  '益赛普/强克':{cat:'bDMARDs',spec:'25mg',unit:'支',freq:'BIW',dose:'1',note:'益赛普/强克 25mg/次 BIW（每周2次），皮下注射'},
   '英夫利西单抗':{cat:'bDMARDs',spec:'100mg',unit:'支',freq:'Q8W',dose:'3',note:'按体重3-5mg/kg，IV，第0/2/6周诱导，后Q8W维持'},
   '戈利木单抗':{cat:'bDMARDs',spec:'50mg',unit:'支',freq:'QM',dose:'1',note:'50mg/月 QM（每月1次），皮下注射'},
   '赛妥珠单抗':{cat:'bDMARDs',spec:'200mg',unit:'支',freq:'Q2W',dose:'1',note:'200mg/次 Q2W（每2周1次）或400mg/月，皮下注射'},
@@ -481,19 +481,24 @@ function calcDiff(){
   const d1=document.getElementById('d1').value,d2=document.getElementById('d2').value
   if(!d1||!d2){alert('请选择两个日期');return}
   const diff=diffDays(parseDate(d1),parseDate(d2))
+  const [a,b]=diff<0?[d2,d1]:[d1,d2]
   document.getElementById('diffNum').textContent=diff<0?-diff:diff
-  document.getElementById('diffSub').textContent=`${d1} → ${d2}`
+  document.getElementById('diffSub').textContent=`${a} → ${b}`
   document.getElementById('diffResult').classList.remove('hide')
 }
 function calcOffset(){
   const base=document.getElementById('offsetBase').value,val=+document.getElementById('offsetVal').value,unit=document.getElementById('offsetUnit').value,dir=+document.getElementById('offsetDir').value
   if(!base||!val){alert('请填写完整');return}
-  const days=val*(unit==='天'?1:unit==='周'?7:30)
-  const end=addDays(parseDate(base),dir*days)
-  document.getElementById('offsetNum').textContent=fmtDate(end)
+  const d=parseDate(base)
+  if(unit==='月'){
+    d.setMonth(d.getMonth()+dir*val)
+  } else {
+    d.setDate(d.getDate()+dir*val*(unit==='周'?7:1))
+  }
+  document.getElementById('offsetNum').textContent=fmtDate(d)
   document.getElementById('offsetResult').classList.remove('hide')
 }
-if('serviceWorker'in navigator)navigator.serviceWorker.register('/ra-drug-calc/sw.js')
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js')
 </script>
 </body>
 </html>

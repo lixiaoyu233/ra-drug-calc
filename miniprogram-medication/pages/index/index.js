@@ -10,7 +10,7 @@ const drugDB = {
   '巴瑞替尼': { cat: 'tsDMARDs', spec: '2mg', unit: '片', freq: 'QD', dose: '1', note: '常用剂量 2-4mg/日 QD（每日1次，1-2片），老年人减量' },
   '乌帕替尼': { cat: 'tsDMARDs', spec: '15mg', unit: '片', freq: 'QD', dose: '1', note: '常用剂量 15mg/日 QD（每日1次，1片缓释片）' },
   '依那西普': { cat: 'bDMARDs', spec: '25mg', unit: '支', freq: 'BIW', dose: '1', note: '常用剂量 25mg/次 BIW（每周2次），皮下注射' },
-  '注射用重组人Ⅱ型肿瘤坏死因子受体-抗体融合蛋白': { cat: 'bDMARDs', spec: '25mg', unit: '支', freq: 'BIW', dose: '1', note: '益赛普/强克 25mg/次 BIW（每周2次），皮下注射' },
+  '益赛普/强克': { cat: 'bDMARDs', spec: '25mg', unit: '支', freq: 'BIW', dose: '1', note: '益赛普/强克 25mg/次 BIW（每周2次），皮下注射' },
   '英夫利西单抗': { cat: 'bDMARDs', spec: '100mg', unit: '支', freq: 'Q8W', dose: '3', note: '按体重3-5mg/kg，IV，第0/2/6周诱导，后Q8W维持' },
   '戈利木单抗': { cat: 'bDMARDs', spec: '50mg', unit: '支', freq: 'QM', dose: '1', note: '50mg/月 QM（每月1次），皮下注射' },
   '赛妥珠单抗': { cat: 'bDMARDs', spec: '200mg', unit: '支', freq: 'Q2W', dose: '1', note: '200mg/次 Q2W（每2周1次）或400mg/月，皮下注射' },
@@ -91,7 +91,7 @@ Page({
     calYear: 2026, calMonth: 7, calDayRows: [], calShow: false,
 
     date1: '', date2: '',
-    date1CalShow: false, date2CalShow: false, dateDiff: '',
+    date1CalShow: false, date2CalShow: false, dateDiff: '', dateDiffA: '', dateDiffB: '',
     calcDate: '', calcOffset: '', calcUnit: '天',
     calcDirection: '往后', calcResult: '', calcDateCalShow: false,
 
@@ -442,7 +442,8 @@ Page({
     const d = this.data
     if (!d.date1 || !d.date2) { wx.showToast({ title: '请选择两个日期', icon: 'none' }); return }
     const diff = util.diffDays(util.parseDate(d.date1), util.parseDate(d.date2))
-    this.setData({ dateDiff: diff })
+    const [a,b]=diff<0?[d.date2,d.date1]:[d.date1,d.date2]
+    this.setData({ dateDiff: diff, dateDiffA: a, dateDiffB: b })
   },
 
   calcDateOffset() {
@@ -451,12 +452,14 @@ Page({
     const offset = parseFloat(d.calcOffset)
     if (isNaN(offset)) { wx.showToast({ title: '请输入有效数字', icon: 'none' }); return }
     const dir = d.calcDirection === '往后' ? 1 : -1
-    let days = 0
-    if (d.calcUnit === '天') days = offset
-    else if (d.calcUnit === '周') days = offset * 7
-    else if (d.calcUnit === '月') days = offset * 30
-    const end = util.addDays(util.parseDate(d.calcDate), dir * days)
-    this.setData({ calcResult: util.formatDate(end) })
+    const dt = util.parseDate(d.calcDate)
+    if (d.calcUnit === '月') {
+      dt.setMonth(dt.getMonth() + dir * offset)
+    } else {
+      const days = offset * (d.calcUnit === '周' ? 7 : 1)
+      dt.setDate(dt.getDate() + dir * days)
+    }
+    this.setData({ calcResult: util.formatDate(dt) })
   },
 
   bindUnitPicker(e) {

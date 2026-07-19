@@ -28,8 +28,8 @@
   "packOptions": {
     "ignore": [
       {
-        "type": "folder",
-        "value": "cli-agent-run"
+        "value": "cli-agent-run",
+        "type": "folder"
       }
     ],
     "include": []

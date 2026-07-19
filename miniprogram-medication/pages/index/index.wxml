@@ -13,11 +13,8 @@
       <view class="section-header">选择药物</view>
       <picker mode="multiSelector" range="{{multiArray}}" value="{{multiIndex}}" bindchange="bindDrugPicker" bindcolumnchange="bindCategoryChange">
         <view class="multi-picker-view">
-          <text class="mp-cat" wx:if="{{!medName}}">点击选择分类与药物</text>
-          <view wx:if="{{medName}}" class="mp-selected">
-            <text class="mp-cat-tag">{{multiArray[0][multiIndex[0]]}}</text>
-            <text class="mp-drug">{{medName}}</text>
-          </view>
+        <text wx:if="{{!medName}}" class="mp-cat">点击选择分类与药物</text>
+        <text wx:if="{{medName}}" class="mp-drug">{{medName}}</text>
         </view>
       </picker>
       <view class="hint" wx:if="{{drugNote}}">{{drugNote}}</view>
@@ -233,7 +230,7 @@
         <text class="rb-label">相差</text>
         <text class="rb-num">{{dateDiff < 0 ? -dateDiff : dateDiff}}</text>
         <text class="rb-label">天</text>
-        <text class="rb-sub">{{date1}} → {{date2}}</text>
+        <text class="rb-sub">{{dateDiffA}} → {{dateDiffB}}</text>
       </view>
     </view>
 

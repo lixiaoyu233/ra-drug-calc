@@ -35,7 +35,7 @@ select.ff-trigger:invalid{color:#C7C7CC}
 .empty{text-align:center;padding:16px 0 8px;font-size:13px;color:#C7C7CC}
 .presc-card{background:#F9F9FB;border-radius:8px;padding:10px 12px;margin-bottom:6px;border:.5px solid #E5E5EA}
 .presc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.presc-title{font-size:13px;font-weight:600;color:#1C1C1E}
+.presc-title{font-size:13px;font-weight:600;color:#1C1C1E;word-break:break-all}
 .presc-body{font-size:12px;color:#636366;line-height:1.5}
 .result{border-left:3px solid #007AFF}
 .result.warn{border-left-color:#FF9500}
@@ -128,8 +128,8 @@ select.ff-trigger:invalid{color:#C7C7CC}
   </div>
 
   <div class="btn-row hide" id="actionBtns">
-    <button class="btn btn-primary" onclick="calcOnce()">计算单次</button>
-    <button class="btn btn-secondary" onclick="resetForm()">清空</button>
+    <button class="btn btn-primary" type="button" onclick="calcOnce()">计算单次</button>
+    <button class="btn btn-secondary" type="button" onclick="resetForm()">清空</button>
   </div>
 
   <div class="card result hide" id="singleResult">
@@ -143,12 +143,12 @@ select.ff-trigger:invalid{color:#C7C7CC}
 
   <div class="card hide" id="multiSection">
     <div class="card-hd">多次处方列表</div>
-    <button class="btn-add" onclick="addPresc()">+ 添加此处方到列表</button>
+    <button class="btn-add" type="button" onclick="addPresc()">+ 添加此处方到列表</button>
     <div class="empty" id="listEmpty">暂无处方记录</div>
     <div id="prescList"></div>
     <div class="btn-row hide" id="gapBtns">
-      <button class="btn btn-primary" onclick="analyze()">分析断药</button>
-      <button class="btn btn-secondary" onclick="clearList()">清空列表</button>
+      <button class="btn btn-primary" type="button" onclick="analyze()">分析断药</button>
+      <button class="btn btn-secondary" type="button" onclick="clearList()">清空列表</button>
     </div>
   </div>
 
@@ -171,7 +171,7 @@ select.ff-trigger:invalid{color:#C7C7CC}
       <label class="ff-lbl">结束日期</label>
       <input class="ff-trigger" type="date" id="d2">
     </div>
-    <button class="btn btn-primary" onclick="calcDiff()">计算相差天数</button>
+    <button class="btn btn-primary" type="button" onclick="calcDiff()">计算相差天数</button>
     <div class="result-box hide" id="diffResult">
       <span>相差</span><span class="num" id="diffNum">0</span><span>天</span>
       <span class="sub" id="diffSub"></span>
@@ -200,7 +200,7 @@ select.ff-trigger:invalid{color:#C7C7CC}
       </div>
       <div class="ff">
         <label class="ff-lbl">&nbsp;</label>
-        <button class="btn btn-primary" onclick="calcOffset()" style="height:36px;font-size:14px">推算</button>
+        <button class="btn btn-primary" type="button" onclick="calcOffset()">推算</button>
       </div>
     </div>
     <div class="result-box hide" id="offsetResult">
@@ -223,7 +223,7 @@ const drugDB = {
   '巴瑞替尼':{cat:'tsDMARDs',spec:'2mg',unit:'片',freq:'QD',dose:'1',note:'常用剂量 2-4mg/日 QD（每日1次，1-2片），老年人减量'},
   '乌帕替尼':{cat:'tsDMARDs',spec:'15mg',unit:'片',freq:'QD',dose:'1',note:'常用剂量 15mg/日 QD（每日1次，1片缓释片）'},
   '依那西普':{cat:'bDMARDs',spec:'25mg',unit:'支',freq:'BIW',dose:'1',note:'常用剂量 25mg/次 BIW（每周2次），皮下注射'},
-  '注射用重组人Ⅱ型肿瘤坏死因子受体-抗体融合蛋白':{cat:'bDMARDs',spec:'25mg',unit:'支',freq:'BIW',dose:'1',note:'益赛普/强克 25mg/次 BIW（每周2次），皮下注射'},
+  '益赛普/强克':{cat:'bDMARDs',spec:'25mg',unit:'支',freq:'BIW',dose:'1',note:'益赛普/强克 25mg/次 BIW（每周2次），皮下注射'},
   '英夫利西单抗':{cat:'bDMARDs',spec:'100mg',unit:'支',freq:'Q8W',dose:'3',note:'按体重3-5mg/kg，IV，第0/2/6周诱导，后Q8W维持'},
   '戈利木单抗':{cat:'bDMARDs',spec:'50mg',unit:'支',freq:'QM',dose:'1',note:'50mg/月 QM（每月1次），皮下注射'},
   '赛妥珠单抗':{cat:'bDMARDs',spec:'200mg',unit:'支',freq:'Q2W',dose:'1',note:'200mg/次 Q2W（每2周1次）或400mg/月，皮下注射'},
@@ -439,16 +439,21 @@ function calcDiff(){
   const d1=document.getElementById('d1').value,d2=document.getElementById('d2').value
   if(!d1||!d2){alert('请选择两个日期');return}
   const diff=diffDays(parseDate(d1),parseDate(d2))
+  const [a,b]=diff<0?[d2,d1]:[d1,d2]
   document.getElementById('diffNum').textContent=diff<0?-diff:diff
-  document.getElementById('diffSub').textContent=`${d1} → ${d2}`
+  document.getElementById('diffSub').textContent=`${a} → ${b}`
   document.getElementById('diffResult').classList.remove('hide')
 }
 function calcOffset(){
   const base=document.getElementById('offsetBase').value,val=+document.getElementById('offsetVal').value,unit=document.getElementById('offsetUnit').value,dir=+document.getElementById('offsetDir').value
   if(!base||!val){alert('请填写完整');return}
-  const days=val*(unit==='天'?1:unit==='周'?7:30)
-  const end=addDays(parseDate(base),dir*days)
-  document.getElementById('offsetNum').textContent=fmtDate(end)
+  const d=parseDate(base)
+  if(unit==='月'){
+    d.setMonth(d.getMonth()+dir*val)
+  } else {
+    d.setDate(d.getDate()+dir*val*(unit==='周'?7:1))
+  }
+  document.getElementById('offsetNum').textContent=fmtDate(d)
   document.getElementById('offsetResult').classList.remove('hide')
 }
 </script>

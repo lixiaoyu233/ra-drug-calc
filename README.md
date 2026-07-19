@@ -1,4 +1,4 @@
-# 风免计算器
+# 风免计算器 (Rheumatology-Calc)
 
 风湿免疫科用药计算器，支持处方分析、断药监测、日期推算。
 
@@ -55,7 +55,7 @@ README.md
 
 ## 使用
 
-**网页版**：访问 [https://lixiaoyu233.github.io/ra-drug-calc/](https://lixiaoyu233.github.io/ra-drug-calc/)
+**网页版**：访问 [https://lixiaoyu233.github.io/Rheumatology-Calc/](https://lixiaoyu233.github.io/Rheumatology-Calc/)
 
 **小程序**：微信搜索「风免计算器」或通过开发者工具导入 `miniprogram-medication/`
 

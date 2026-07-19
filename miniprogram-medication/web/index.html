@@ -250,7 +250,7 @@ select.ff-trigger{color:#F5F5F7}
     <div id="gapBody"></div>
   </div>
 
-  <button class="btn btn-primary save-btn" type="button" onclick="showSaveDialog()">保存记录</button>
+  <button class="btn btn-primary save-btn hide" type="button" id="saveBtn" onclick="showSaveDialog()">保存记录</button>
 
 </div>
 
@@ -519,7 +519,7 @@ function renderList(){
 
 function delPresc(id){state.prescList=state.prescList.filter(p=>p.id!==id);renderList();hideGap()}
 function clearList(){state.prescList=[];state.idCounter=0;renderList();hideGap()}
-function hideGap(){document.getElementById('gapResult').classList.add('hide')}
+function hideGap(){document.getElementById('gapResult').classList.add('hide');document.getElementById('saveBtn').classList.add('hide')}
 
 // ==== Analyze gaps ====
 function analyze(){
@@ -576,6 +576,7 @@ function analyze(){
   html+='</div>'
   document.getElementById('gapBody').innerHTML=html
   document.getElementById('gapResult').classList.remove('hide')
+  document.getElementById('saveBtn').classList.remove('hide')
 }
 
 // ==== Records ====

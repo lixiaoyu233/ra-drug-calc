@@ -661,7 +661,7 @@ function showSaveDialog() {
 }
 
 function onSaveAbbrInput(input) {
-  input.value = input.value.replace(/[^a-zA-Z]/g, '').slice(0, 4).toUpperCase()
+  input.value = input.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
 }
 
 function confirmSave() {

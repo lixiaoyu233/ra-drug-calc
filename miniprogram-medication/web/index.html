@@ -389,7 +389,7 @@ function calcSupply(qty,dose,freq){
 }
 
 // ==== State ====
-let state={drugByCat:{},medName:'',freq:'QD',unit:'片',prescList:[],idCounter:0}
+let state={drugByCat:{},medName:'',freq:'QD',unit:'片',prescList:[],idCounter:0,editRecordId:null}
 
 function buildDrugIndex(){
   const by={};for(const[n,i]of Object.entries(drugDB)){if(!by[i.cat])by[i.cat]=[];by[i.cat].push(n)}
@@ -409,6 +409,7 @@ function init(){
   fs.innerHTML=freqOpts.map((f,i)=>`<option value="${f.val}" ${i===0?'selected':''}>${f.label}</option>`).join('')
 }
 init()
+loadRecords()
 
 // ==== Tab ====
 function switchTab(n){
@@ -564,6 +565,114 @@ function analyze(){
   html+='</div>'
   document.getElementById('gapBody').innerHTML=html
   document.getElementById('gapResult').classList.remove('hide')
+}
+
+// ==== Records ====
+const STORAGE_KEY = 'calc_records'
+let editRecordId = null
+
+function loadRecords() {
+  const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+  const list = raw.map(r => {
+    const days = calcRecordDays(r.prescList)
+    return { ...r, remainingDays: days, saveDateStr: fmtDate(new Date(r.lastSaved)) }
+  })
+  list.sort((a, b) => b.lastSaved - a.lastSaved)
+  renderRecords(list)
+}
+
+function calcRecordDays(prescList) {
+  if (!prescList || prescList.length === 0) return -1
+  const sorted = [...prescList].sort((a, b) => a.prescDate.localeCompare(b.prescDate))
+  let p = +sorted[0].totalQty, d = sorted[0].dailyDose, l = parseDate(sorted[0].prescDate)
+  for (let i = 1; i < sorted.length; i++) {
+    const c = parseDate(sorted[i].prescDate), e = diffDays(l, c), n = e * d
+    if (n > p) { p = 0 } else { p -= n }
+    p += +sorted[i].totalQty; d = sorted[i].dailyDose; l = c
+  }
+  return Math.max(0, Math.floor(p / d))
+}
+
+function renderRecords(list) {
+  const el = document.getElementById('recordsList')
+  if (!el) return
+  if (!list.length) { el.innerHTML = '<div class="empty">暂无保存记录</div>'; return }
+  el.innerHTML = list.map(r => `<div class="rec-card">
+    <div class="rec-head"><span class="rec-abbr">${r.abbr}</span>
+      <div class="rec-actions"><span class="rec-btn edit" onclick="editRecord(${r.id})">编辑</span><span class="rec-btn del" onclick="deleteRecord(${r.id})">删除</span></div>
+    </div>
+    <div class="rec-body"><span class="rec-info">${r.medName} ｜ ${r.prescList.length}次处方</span><span class="rec-info">保存于 ${r.saveDateStr}</span></div>
+    <div class="rec-foot"><span class="rec-days ${r.remainingDays>=0 && r.remainingDays<=7?'warn':''}">${r.remainingDays>=0?'剩余 '+r.remainingDays+' 天':'已过期'}</span>${r.remainingDays>=0 && r.remainingDays<=7?'<span class="rec-badge">⚠️ 即将用完</span>':''}</div>
+  </div>`).join('')
+}
+
+function showSaveDialog() {
+  if (state.prescList.length === 0) { alert('暂无处方记录可保存'); return }
+  const abbr = editRecordId
+    ? (JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').find(r => r.id === editRecordId)?.abbr || '')
+    : ''
+  document.getElementById('saveAbbrInput').value = abbr
+  document.getElementById('saveAbbrError').classList.add('hide')
+  document.getElementById('saveDialogTitle').textContent = editRecordId ? '更新记录' : '保存记录'
+  document.getElementById('saveOverlay').classList.remove('hide')
+  document.getElementById('saveDialog').classList.remove('hide')
+  document.getElementById('saveAbbrInput').focus()
+}
+
+function onSaveAbbrInput(input) {
+  input.value = input.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
+}
+
+function confirmSave() {
+  const input = document.getElementById('saveAbbrInput')
+  const abbr = input.value.trim()
+  if (abbr.length !== 4) { document.getElementById('saveAbbrError').textContent = '请输入4位字母'; document.getElementById('saveAbbrError').classList.remove('hide'); return }
+  const record = {
+    id: editRecordId || Date.now(),
+    abbr, medName: state.medName,
+    prescList: state.prescList.map(p => ({...p})),
+    drugUnit: state.unit, lastSaved: Date.now(),
+    dosePerTime: document.getElementById('dosePerTime').value,
+    freqVal: document.getElementById('freqSelect').value
+  }
+  let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+  const idx = records.findIndex(r => r.id === record.id)
+  if (idx >= 0) { records[idx] = record } else { records.push(record) }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records))
+  cancelSave()
+  editRecordId = null
+  loadRecords()
+  alert(idx >= 0 ? '已更新' : '已保存')
+}
+
+function cancelSave() {
+  const o = document.getElementById('saveOverlay'); if(o)o.classList.add('hide')
+  const d = document.getElementById('saveDialog'); if(d)d.classList.add('hide')
+}
+
+function deleteRecord(id) {
+  if (!confirm('确定删除此记录？')) return
+  let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records.filter(r => r.id !== id)))
+  loadRecords()
+}
+
+function editRecord(id) {
+  const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+  const rec = records.find(r => r.id === id)
+  if (!rec) { alert('记录不存在'); return }
+  editRecordId = id
+  state.medName = rec.medName; state.unit = rec.drugUnit
+  state.prescList = rec.prescList.map(p => ({...p}))
+  document.getElementById('dosePerTime').value = rec.dosePerTime || ''
+  const fs = document.getElementById('freqSelect')
+  if (fs) fs.value = rec.freqVal || 'QD'
+  document.getElementById('medName').textContent = rec.medName
+  document.getElementById('prescForm').classList.remove('hide')
+  document.getElementById('actionBtns').classList.remove('hide')
+  document.getElementById('multiSection').classList.remove('hide')
+  switchTab(0)
+  alert('正在编辑 ' + rec.abbr)
 }
 
 // ==== Date tools ====

@@ -455,7 +455,7 @@ Page({
   },
 
   onSaveAbbrInput(e) {
-    let v = (e.detail.value || '').replace(/[^a-zA-Z]/g, '').slice(0, 4).toUpperCase()
+    let v = (e.detail.value || '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase()
     this.setData({ saveAbbr: v, saveAbbrError: '' })
   },
 

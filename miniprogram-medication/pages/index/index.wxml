@@ -160,6 +160,10 @@
             {{gapResult.remainingDays>=0 ? '还剩 '+gapResult.remainingDays+' 天' : '已断药 '+(-gapResult.remainingDays)+' 天'}}
           </text>
         </view>
+        <view class="gs-row" wx:if="{{!gapResult.contMet}}">
+          <text class="gs-lbl">还需购买药物</text>
+          <text class="gs-val orange">{{gapResult.pillsNeeded}}{{gapResult.unit}}</text>
+        </view>
         <view class="gs-row">
           <text class="gs-lbl">建议购药时间</text>
           <text class="gs-val {{gapResult.refillUrgent?'red':'warn'}}">{{gapResult.suggestRefillBy}}{{gapResult.refillUrgent?' ⚠️ 已过期':''}} 前</text>
@@ -303,6 +307,11 @@
         <view class="rec-body">
           <text class="rec-info">{{item.medName}} ｜ {{item.prescList.length}}次处方</text>
           <text class="rec-info">保存于 {{item.saveDateStr}}</text>
+          <text class="rec-info">用完时间：{{item.endDate}}</text>
+          <text class="rec-info">连续未断药：{{item.contDays}}天</text>
+          <text class="rec-info" wx:if="{{!item.contMet}}">项目要求（3个月）：还需{{item.targetRemain}}天</text>
+          <text class="rec-info" wx:if="{{item.contMet}}">项目要求（3个月）：✅ 已达标</text>
+          <text class="rec-info" wx:if="{{!item.contMet}}">还需购买药物：{{item.pillsNeeded}}{{item.unit}}</text>
         </view>
         <view class="rec-foot">
           <text class="rec-days {{item.remainingDays>=0 && item.remainingDays<=7?'warn':''}}">

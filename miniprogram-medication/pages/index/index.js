@@ -396,6 +396,7 @@ Page({
     const todayStr = util.formatDate(new Date())
     const remainingDays = util.diffDays(new Date(), finalEnd)
     const refillUrgent = suggestStr <= todayStr
+    const pillsNeeded = contMet ? 0 : Math.ceil(latest.dailyDose * targetRemain)
     this.setData({
       gapResult: {
         gaps, totalGapDays, sorted: entries, count: list.length,
@@ -403,7 +404,8 @@ Page({
         suggestRefillBy: suggestStr, remainingDays, refillUrgent,
         today: todayStr,
         latestDose: `${latest.dosePerTime}${latest.unit}/次 ${latest.freqLabel}`,
-        contMonths, contDays, contStart, contMet, targetRemain
+        contMonths, contDays, contStart, contMet, targetRemain,
+        pillsNeeded, unit: latest.unit
       }
     })
   },
@@ -415,35 +417,52 @@ Page({
     const raw = wx.getStorageSync(this.STORAGE_KEY) || []
     const now = new Date()
     const records = raw.map(r => {
-      const days = this.calcRecordDays(r.prescList)
+      const det = this.calcRecordDetails(r.prescList)
       return {
         ...r,
-        remainingDays: days,
-        saveDateStr: util.formatDate(new Date(r.lastSaved))
+        remainingDays: det.remainingDays,
+        saveDateStr: util.formatDate(new Date(r.lastSaved)),
+        endDate: det.endDate,
+        contDays: det.contDays,
+        contMet: det.contMet,
+        targetRemain: det.targetRemain,
+        pillsNeeded: det.pillsNeeded,
+        unit: det.unit
       }
     })
     records.sort((a, b) => b.lastSaved - a.lastSaved)
     this.setData({ savedRecords: records })
   },
 
-  calcRecordDays(prescList) {
-    if (!prescList || prescList.length === 0) return -1
+  calcRecordDetails(prescList) {
+    if (!prescList || prescList.length === 0) return { remainingDays: -1 }
     const sorted = [...prescList].sort((a, b) => a.prescDate.localeCompare(b.prescDate))
     let remainPills = parseFloat(sorted[0].totalQty)
     let currentDose = sorted[0].dailyDose
     let lastDate = util.parseDate(sorted[0].prescDate)
+    const entries = []
+    const firstCumEndStr = util.formatDate(util.addDays(lastDate, Math.floor(remainPills / currentDose) - 1))
+    entries.push({ prescDate: sorted[0].prescDate, cumEnd: firstCumEndStr, hasGapBefore: false })
     for (let i = 1; i < sorted.length; i++) {
-      const p = sorted[i]
-      const currDate = util.parseDate(p.prescDate)
-      const daysElapsed = util.diffDays(lastDate, currDate)
-      const needed = daysElapsed * currentDose
-      if (needed > remainPills) { remainPills = 0 } else { remainPills -= needed }
+      const p = sorted[i], cd = util.parseDate(p.prescDate), el = util.diffDays(lastDate, cd), need = el * currentDose
+      let hasGap = false
+      if (need > remainPills) { remainPills = 0; hasGap = true } else { remainPills -= need }
       remainPills += parseFloat(p.totalQty)
-      currentDose = p.dailyDose
-      lastDate = currDate
+      currentDose = p.dailyDose; lastDate = cd
+      const ce = util.formatDate(util.addDays(lastDate, Math.floor(remainPills / currentDose) - 1))
+      entries.push({ prescDate: p.prescDate, cumEnd: ce, hasGapBefore: hasGap })
     }
-    const finalDays = Math.floor(remainPills / currentDose)
-    return Math.max(0, finalDays)
+    const finalDate = entries[entries.length - 1].cumEnd
+    const finalEnd = util.parseDate(finalDate)
+    const remainingDays = Math.max(0, util.diffDays(new Date(), finalEnd))
+    let contStart = entries[0].prescDate
+    for (const e of entries) { if (e.hasGapBefore) contStart = e.prescDate }
+    const contTotalDays = Math.max(0, util.diffDays(util.parseDate(contStart), new Date()))
+    const target = 90
+    const targetRemain = Math.max(0, target - contTotalDays)
+    const contMet = contTotalDays >= target
+    const pillsNeeded = contMet ? 0 : Math.ceil(currentDose * targetRemain)
+    return { remainingDays, endDate: finalDate, contDays: contTotalDays, contMet, targetRemain, pillsNeeded, unit: sorted[sorted.length - 1]?.unit || '粒' }
   },
 
   showSaveDialog() {

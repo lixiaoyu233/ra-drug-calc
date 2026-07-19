@@ -580,6 +580,10 @@ function analyze(){
   const contDays=Math.max(0,diffDays(parseDate(continuousStart),new Date()))
   const contM=Math.floor(contDays/30),contD=contDays%30
   const target=90,tRemain=Math.max(0,target-contDays),contMet=contDays>=target
+  const latest = sorted[sorted.length - 1]
+  const pillsNeeded = contMet ? 0 : Math.ceil(latest.dailyDose * tRemain)
+  document.getElementById('pillsNeededText').textContent = pillsNeeded + (latest.unit || '粒')
+  document.getElementById('pillsNeededRow').classList.toggle('hide', contMet)
   const suggestDate=addDays(finalEnd,-7),suggestStr=fmtDate(suggestDate)
   const remainDays=diffDays(new Date(),finalEnd),urgent=suggestStr<=todayStr()
   const gapSet=new Set(gaps.map(g=>g.index))
@@ -597,6 +601,7 @@ function analyze(){
   html+=`<div class="sm-div"></div>`
   html+=`<div class="sm-row"><span class="sm-lbl">全部药可吃到</span><span class="sm-val">${finalDate}</span></div>`
   html+=`<div class="sm-row"><span class="sm-lbl">距离今天</span><span class="sm-val ${remainDays>=0?'blue':'red'}">${remainDays>=0?'还剩 '+remainDays+' 天':'已断药 '+(-remainDays)+' 天'}</span></div>`
+  html+=`<div class="sm-row ${contMet?'hide':''}" id="pillsNeededRow"><span class="sm-lbl">还需购买药物</span><span class="sm-val orange" id="pillsNeededText">${pillsNeeded}${latest.unit||'粒'}</span></div>`
   html+=`<div class="sm-row"><span class="sm-lbl">建议购药时间</span><span class="sm-val ${urgent?'red':'orange'}">${suggestStr}${urgent?' ⚠️ 已过期':''} 前</span></div>`
   html+='</div>'
   document.getElementById('gapBody').innerHTML=html
@@ -610,25 +615,41 @@ function loadRecords() {
   const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
   const now = new Date()
   const list = raw.map(r => {
-    const days = calcRecordDays(r.prescList)
-    return { ...r, remainingDays: days, saveDateStr: fmtDate(new Date(r.lastSaved)) }
+    const det = calcRecordDays(r.prescList)
+    return { ...r, ...det, saveDateStr: fmtDate(new Date(r.lastSaved)) }
   })
   list.sort((a, b) => b.lastSaved - a.lastSaved)
   renderRecords(list)
 }
 
 function calcRecordDays(prescList) {
-  if (!prescList || prescList.length === 0) return -1
+  if (!prescList || prescList.length === 0) return { remainingDays: -1 }
   const sorted = [...prescList].sort((a, b) => a.prescDate.localeCompare(b.prescDate))
   let remainPills = +sorted[0].totalQty
   let currentDose = sorted[0].dailyDose
   let lastDate = parseDate(sorted[0].prescDate)
+  const entries = []
+  const firstCumEndStr = fmtDate(addDays(lastDate, Math.floor(remainPills / currentDose) - 1))
+  entries.push({ prescDate: sorted[0].prescDate, cumEnd: firstCumEndStr, hasGapBefore: false })
   for (let i = 1; i < sorted.length; i++) {
     const p = sorted[i], cd = parseDate(p.prescDate), elapsed = diffDays(lastDate, cd), need = elapsed * currentDose
-    if (need > remainPills) { remainPills = 0 } else { remainPills -= need }
+    let hasGap = false
+    if (need > remainPills) { remainPills = 0; hasGap = true } else { remainPills -= need }
     remainPills += +p.totalQty; currentDose = p.dailyDose; lastDate = cd
+    const ce = fmtDate(addDays(lastDate, Math.floor(remainPills / currentDose) - 1))
+    entries.push({ prescDate: p.prescDate, cumEnd: ce, hasGapBefore: hasGap })
   }
-  return Math.max(0, Math.floor(remainPills / currentDose))
+  const finalDate = entries[entries.length - 1].cumEnd
+  const finalEnd = parseDate(finalDate)
+  const remainingDays = Math.max(0, diffDays(new Date(), finalEnd))
+  let contStart = entries[0].prescDate
+  for (const e of entries) { if (e.hasGapBefore) contStart = e.prescDate }
+  const contTotalDays = Math.max(0, diffDays(parseDate(contStart), new Date()))
+  const target = 90
+  const targetRemain = Math.max(0, target - contTotalDays)
+  const contMet = contTotalDays >= target
+  const pillsNeeded = contMet ? 0 : Math.ceil(currentDose * targetRemain)
+  return { remainingDays, endDate: finalDate, contDays: contTotalDays, contMet, targetRemain, pillsNeeded, unit: sorted[sorted.length - 1]?.unit || '粒' }
 }
 
 function renderRecords(list) {
@@ -638,7 +659,7 @@ function renderRecords(list) {
     <div class="rec-head"><span class="rec-abbr">${r.abbr}</span>
       <div class="rec-actions"><span class="rec-btn edit" onclick="editRecord(${r.id})">编辑</span><span class="rec-btn del" onclick="deleteRecord(${r.id})">删除</span></div>
     </div>
-    <div class="rec-body"><span class="rec-info">${r.medName} ｜ ${r.prescList.length}次处方</span><span class="rec-info">保存于 ${r.saveDateStr}</span></div>
+    <div class="rec-body"><span class="rec-info">${r.medName} ｜ ${r.prescList.length}次处方</span><span class="rec-info">保存于 ${r.saveDateStr}</span><span class="rec-info">用完时间：${r.endDate}</span><span class="rec-info">连续未断药：${r.contDays}天</span><span class="rec-info">${r.contMet ? '项目要求（3个月）：✅ 已达标' : '项目要求（3个月）：还需'+r.targetRemain+'天'}</span>${r.contMet ? '' : '<span class="rec-info">还需购买药物：'+r.pillsNeeded+r.unit+'</span>'}</div>
     <div class="rec-foot"><span class="rec-days ${r.remainingDays>=0 && r.remainingDays<=7?'warn':''}">${r.remainingDays>=0?'剩余 '+r.remainingDays+' 天':'已过期'}</span>${r.remainingDays>=0 && r.remainingDays<=7?'<span class="rec-badge">⚠️ 即将用完</span>':''}</div>
   </div>`).join('')
 }

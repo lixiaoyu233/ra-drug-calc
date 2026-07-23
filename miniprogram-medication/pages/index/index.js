@@ -335,7 +335,7 @@ Page({
     const start = util.parseDate(prescDate)
     const end = util.addDays(start, daysSupply - 1)
     const id = d.idCounter + 1
-    const entry = { id, medName: d.medName, prescDate, dosePerTime: d.dosePerTime, unit: d.drugUnit, freqLabel: d.freqLabel, totalQty: d.totalQty, dailyDose, daysSupply, endDate: util.formatDate(end) }
+    const entry = { id, medName: d.medName, prescDate, dosePerTime: d.dosePerTime, unit: d.drugUnit, freqLabel: d.freqLabel, freqVal: d.freqVal, totalQty: d.totalQty, dailyDose, daysSupply, endDate: util.formatDate(end) }
     this.setData({ prescList: [...d.prescList, entry], idCounter: id, gapResult: null })
     wx.showToast({ title: '已添加第 ' + (d.prescList.length + 1) + ' 次处方', icon: 'success' })
   },

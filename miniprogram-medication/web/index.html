@@ -717,6 +717,7 @@ function editRecord(id) {
   document.getElementById('prescForm').classList.remove('hide')
   document.getElementById('actionBtns').classList.remove('hide')
   document.getElementById('multiSection').classList.remove('hide')
+  renderList()
   switchTab(0)
   alert('正在编辑 ' + rec.abbr)
 }
